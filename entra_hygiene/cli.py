@@ -10,10 +10,15 @@ from rich.table import Table
 
 from entra_hygiene.auth import AuthError, get_token
 from entra_hygiene.checks.apps import ExpiringSecretsCheck, OwnerlessAppsCheck
+from entra_hygiene.checks.groups import EmptyGroupsCheck, OwnerlessGroupsCheck
 from entra_hygiene.checks.policies import (
     BlockLegacyAuthCheck,
     MfaForAllCheck,
     ReportOnlyPoliciesCheck,
+)
+from entra_hygiene.checks.roles import (
+    PermanentPrivilegedAssignmentsCheck,
+    PrivilegedServicePrincipalsCheck,
 )
 from entra_hygiene.checks.users import (
     GlobalAdminCountCheck,
@@ -44,6 +49,10 @@ ALL_CHECKS = [
     MfaForAllCheck(),
     BlockLegacyAuthCheck(),
     ReportOnlyPoliciesCheck(),
+    PermanentPrivilegedAssignmentsCheck(),
+    PrivilegedServicePrincipalsCheck(),
+    OwnerlessGroupsCheck(),
+    EmptyGroupsCheck(),
 ]
 
 SEVERITY_COLORS = {
