@@ -2,7 +2,7 @@
 
 A command-line tool that audits your Entra ID (Azure AD) tenant and tells you what's wrong before someone else finds out.
 
-It connects to Microsoft Graph API, runs a suite of hygiene checks across users, apps, Conditional Access policies, groups, and roles, then produces a severity-graded report — in your terminal, as JSON, as a self-contained HTML file, or as live Prometheus metrics for your existing Grafana stack.
+It connects to Microsoft Graph API, runs a suite of hygiene checks across users, apps, Conditional Access policies, groups, and roles, then produces a severity-graded report — in your terminal, as JSON, as a self-contained HTML file, or as live Prometheus metrics for your existing stack.
 
 Built for IT admins and security teams at SMBs who need a scriptable, schedulable alternative to clicking through the Azure portal.
 
@@ -10,26 +10,21 @@ Built for IT admins and security teams at SMBs who need a scriptable, schedulabl
 
 ## What It Checks
 
-**Users**
-- Accounts with no sign-in activity in 90+ days
-- Accounts with no MFA registered
-- Guest accounts with privileged roles
-- Global Admin count and last sign-in per admin
-
-**App Registrations & Service Principals**
-- Client secrets expiring within 30 / 60 / 90 days
-- Secrets that have already expired
-- App registrations with no owners
-
-**Conditional Access**
-- No MFA enforcement policy for all users
-- No policy blocking legacy authentication
-- Users or groups excluded from all CA policies
-
-**Groups & Roles**
-- Permanent privileged role assignments (vs. PIM-eligible)
-- External users holding directory roles
-- Empty groups and groups with no owners
+| ID | Severity | Check |
+|---|---|---|
+| `USER_001` | MEDIUM | Accounts with no sign-in activity beyond the configured threshold (default 90 days) |
+| `USER_002` | HIGH | Enabled accounts with no MFA method registered |
+| `USER_003` | CRITICAL / HIGH | Guest accounts holding directory roles |
+| `USER_004` | HIGH / CRITICAL | Global Admin count out of range, or stale Global Admin accounts |
+| `APPS_001` | CRITICAL / HIGH | App secrets and certificates that are expired or expiring within 30 days |
+| `APPS_002` | MEDIUM | App registrations with no assigned owners |
+| `POLICY_001` | HIGH | No enabled CA policy enforcing MFA for all users across all apps |
+| `POLICY_002` | HIGH | Legacy authentication (Exchange ActiveSync, IMAP, POP3, SMTP Auth) not fully blocked |
+| `POLICY_003` | LOW | Conditional Access policies stuck in report-only mode |
+| `ROLES_001` | HIGH / MEDIUM | Users with permanent (non-PIM) assignments to privileged roles |
+| `ROLES_002` | HIGH | Service principals holding privileged directory roles |
+| `GROUPS_001` | MEDIUM | Groups with no assigned owners |
+| `GROUPS_002` | LOW | Empty groups with no members |
 
 ---
 
@@ -40,32 +35,38 @@ Built for IT admins and security teams at SMBs who need a scriptable, schedulabl
 ```bash
 git clone https://github.com/guyvolvo/entra-hygiene.git
 cd entra-hygiene
+cp .env.example .env
+# Fill in TENANT_ID, CLIENT_ID, CLIENT_SECRET in .env
 ```
 
-Fill in your credentials in `.env`, then choose a mode:
-
-**Background service** — Compose builds and starts everything:
+**Background service** — rescans on interval, exposes Prometheus metrics:
 
 ```bash
 docker compose up
 ```
 
-**One-off scan** — build first, then run:
+**One-off scan:**
 
 ```bash
-docker build -t entra-hygiene .
+docker build -f docker/Dockerfile -t entra-hygiene .
 
 # Terminal output
 docker run --env-file .env entra-hygiene scan
 
-# HTML report
+# HTML report (open in browser or paste into an Outlook email body)
 docker run --env-file .env entra-hygiene scan --output html > report.html
 
-# JSON output
+# JSON output (for SIEM ingestion or scripting)
 docker run --env-file .env entra-hygiene scan --output json > report.json
 ```
 
-No app registration yet? Try device-code auth first:
+**Run specific checks only:**
+
+```bash
+docker run --env-file .env entra-hygiene scan --checks USER_001,USER_002,APPS_001
+```
+
+**No app registration yet?** Use device-code auth to test against your tenant interactively:
 
 ```bash
 docker run -it --env-file .env entra-hygiene scan --auth device-code
@@ -73,38 +74,9 @@ docker run -it --env-file .env entra-hygiene scan --auth device-code
 
 ---
 
-## Prometheus Integration
-
-When running in serve mode the tool exposes `/metrics` on `:5454`. Add this to your Prometheus scrape config:
-
-```yaml
-scrape_configs:
-  - job_name: entra-hygiene
-    static_configs:
-      - targets: ["<host>:5454"]
-```
-
-**Exposed metrics:**
-
-```
-entra_hygiene_findings_total{severity="critical|high|medium|low"}
-entra_hygiene_stale_accounts_total
-entra_hygiene_accounts_without_mfa_total
-entra_hygiene_expiring_secrets_total{days_bucket="30|60|90"}
-entra_hygiene_expired_secrets_total
-entra_hygiene_global_admins_total
-entra_hygiene_ca_policy_gaps_total
-entra_hygiene_privileged_external_users_total
-entra_hygiene_last_scan_timestamp_seconds
-entra_hygiene_scan_duration_seconds
-entra_hygiene_scan_success
-```
-
----
-
 ## Azure App Registration
 
-The tool needs an App Registration in Entra ID with the following **Application permissions**. A tenant admin must grant admin consent once.
+The tool needs an App Registration in Entra ID with **Application permissions** (not delegated). A tenant admin must grant admin consent once.
 
 | Permission | Purpose |
 |---|---|
@@ -116,9 +88,9 @@ The tool needs an App Registration in Entra ID with the following **Application 
 | `RoleManagement.Read.Directory` | Read directory role assignments |
 | `Mail.Send` | Send HTML scan reports by email (optional) |
 
-> `Mail.Send` is only required if you use the `SENDER_EMAIL` / `REPORT_EMAIL` email feature. With application permission it can send as any mailbox in the tenant — scope it to a dedicated alerts mailbox via an [Exchange application access policy](https://learn.microsoft.com/en-us/graph/auth-limit-mailbox-access) if your org requires it.
+> `Mail.Send` is only required if you use the `SENDER_EMAIL` / `REPORT_EMAIL` email feature. With application permission it can send as any mailbox in the tenant. Scope it to a dedicated alerts mailbox via an [Exchange application access policy](https://learn.microsoft.com/en-us/graph/auth-limit-mailbox-access) if your org requires it.
 
-**Steps:**
+**Setup steps:**
 1. Azure Portal → Entra ID → App registrations → New registration
 2. Name it anything (e.g. `entra-hygiene`)
 3. API permissions → Add → Microsoft Graph → Application permissions → add all permissions above
@@ -131,14 +103,19 @@ For production use, prefer a certificate over a client secret.
 
 ## Configuration
 
+Copy `.env.example` to `.env` and fill in your values:
+
 ```env
+# Required
 TENANT_ID=your-tenant-id
 CLIENT_ID=your-app-client-id
 CLIENT_SECRET=your-client-secret
 
-# Optional — these are the defaults
+# Optional -- scan thresholds (these are the defaults)
 STALE_DAYS=90
 SECRET_EXPIRY_WARNING_DAYS=30
+
+# Optional -- serve mode (these are the defaults)
 SCAN_INTERVAL_HOURS=6
 METRICS_PORT=5454
 
@@ -149,6 +126,64 @@ REPORT_EMAIL=recipient@yourdomain.com
 
 ---
 
+## Serve Mode
+
+`docker compose up` runs the tool as a long-lived service. It performs a full scan on startup, then rescans every `SCAN_INTERVAL_HOURS` hours, re-authenticating before each run to handle token expiry.
+
+Metrics are exposed at `:5454/metrics` in Prometheus text format. Add this to your existing scrape config:
+
+```yaml
+scrape_configs:
+  - job_name: entra-hygiene
+    static_configs:
+      - targets: ["<host>:5454"]
+```
+
+**Exposed metrics:**
+
+```
+entra_hygiene_findings_total{severity="critical|high|medium|low|info"}
+entra_hygiene_findings_by_check{check_id="USER_001|APPS_001|..."}
+entra_hygiene_check_errors_total
+entra_hygiene_last_scan_timestamp_seconds
+entra_hygiene_scan_duration_seconds
+entra_hygiene_scan_success
+```
+
+---
+
+## GitHub Actions
+
+A scheduled workflow runs every Sunday at 09:00 UTC. It uploads HTML and JSON reports as workflow artifacts (retained 30 days) and optionally emails the HTML report.
+
+**Required secrets** (Settings → Secrets → Actions):
+
+| Secret | Description |
+|---|---|
+| `TENANT_ID` | Entra tenant ID |
+| `CLIENT_ID` | App registration client ID |
+| `CLIENT_SECRET` | App registration client secret |
+| `SENDER_EMAIL` | Mailbox to send report from (optional) |
+| `REPORT_EMAIL` | Recipient address (optional) |
+
+`SENDER_EMAIL` and `REPORT_EMAIL` are both required for email delivery. If either is absent the email step is skipped and the job still succeeds.
+
+**Manual runs** are supported via `workflow_dispatch`. You can optionally specify a comma-separated list of check IDs to run only a subset, and toggle whether to send the email.
+
+---
+
+## Exit Codes
+
+| Code | Meaning |
+|---|---|
+| `0` | Scan completed, no findings |
+| `1` | Auth failure or invalid configuration |
+| `2` | Scan completed, findings were found |
+
+Exit code `2` is a normal operational state — your automation should treat it as a non-error.
+
+---
+
 ## Design Principles
 
 - **Read-only.** This tool never modifies your tenant. Every finding includes a remediation suggestion — acting on it is always a manual step.
@@ -156,4 +191,3 @@ REPORT_EMAIL=recipient@yourdomain.com
 - **Checks are independent.** One failing check never blocks the rest.
 - **Self-contained output.** The HTML report is a single file with no external dependencies — safe to email or archive.
 - **No telemetry.** Data goes to Microsoft Graph only. Nothing leaves your environment.
-
