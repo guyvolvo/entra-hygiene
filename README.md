@@ -153,10 +153,3 @@ METRICS_PORT=5555
 - **Self-contained output.** The HTML report is a single file with no external dependencies — safe to email or archive.
 - **No telemetry.** Data goes to Microsoft Graph only. Nothing leaves your environment.
 
----
-
-## Project Status
-
-Under active development. Phase 1 (user checks) is being built first against a live tenant.
-
-Contributions and issues welcome.
