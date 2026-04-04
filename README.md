@@ -156,19 +156,37 @@ entra_hygiene_scan_success
 
 A scheduled workflow runs every Sunday at 09:00 UTC. It uploads HTML and JSON reports as workflow artifacts (retained 30 days) and optionally emails the HTML report.
 
-**Required secrets** (Settings → Secrets → Actions):
+The workflow file is already in the repo at `.github/workflows/weekly-scan.yml`. GitHub picks it up automatically — no installation required.
 
-| Secret | Description |
-|---|---|
-| `TENANT_ID` | Entra tenant ID |
-| `CLIENT_ID` | App registration client ID |
-| `CLIENT_SECRET` | App registration client secret |
-| `SENDER_EMAIL` | Mailbox to send report from (optional) |
-| `REPORT_EMAIL` | Recipient address (optional) |
+**Enabling the workflow:**
 
-`SENDER_EMAIL` and `REPORT_EMAIL` are both required for email delivery. If either is absent the email step is skipped and the job still succeeds.
+1. Go to your repo on GitHub → **Actions** tab
+2. If prompted, click **Enable GitHub Actions**
+3. The workflow will run on schedule from that point forward
 
-**Manual runs** are supported via `workflow_dispatch`. You can optionally specify a comma-separated list of check IDs to run only a subset, and toggle whether to send the email.
+**Adding secrets:**
+
+Go to **Settings → Secrets and variables → Actions → New repository secret** and add each of the following:
+
+| Secret | Required | Value |
+|---|---|---|
+| `TENANT_ID` | Yes | Your Entra tenant ID |
+| `CLIENT_ID` | Yes | App registration client ID |
+| `CLIENT_SECRET` | Yes | App registration client secret |
+| `SENDER_EMAIL` | No | Mailbox to send the report from |
+| `REPORT_EMAIL` | No | Recipient address for the emailed report |
+
+Secrets are encrypted and never visible after saving. They are injected as environment variables at runtime only.
+
+If `SENDER_EMAIL` or `REPORT_EMAIL` are absent the email step is skipped — the scan and artifact upload still run.
+
+**Manual runs:**
+
+Actions → **Entra Hygiene Scan** → **Run workflow**. You can optionally pass a comma-separated list of check IDs to run only a subset, and toggle whether to send the email.
+
+**Finding the reports:**
+
+After each run: Actions → click the run → scroll to **Artifacts** → download `entra-hygiene-<run_id>` (contains `report.html` and `report.json`, retained 30 days).
 
 ---
 
