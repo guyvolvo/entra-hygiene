@@ -1,8 +1,11 @@
 from __future__ import annotations
 
-from jinja2 import Template
+from jinja2 import Environment
 
 from entra_hygiene.models import ScanResult, Severity
+
+# autoescape=True prevents XSS if any Graph-sourced string contains HTML characters.
+_env = Environment(autoescape=True)
 
 SEVERITY_ORDER = list(Severity)
 
@@ -24,7 +27,7 @@ SEV_BG = {
 
 # Base styles applied as inline on every element so Outlook renders them correctly.
 # The <style> block is a browser-only enhancement (hover row, font smoothing).
-TEMPLATE = Template("""\
+TEMPLATE = _env.from_string("""\
 <!DOCTYPE html>
 <html lang="en">
 <head>

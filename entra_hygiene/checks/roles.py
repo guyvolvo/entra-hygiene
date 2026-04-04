@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from entra_hygiene.checks.base import BaseCheck
+from entra_hygiene.checks.users import GLOBAL_ADMIN_ROLE_TEMPLATE_ID
 from entra_hygiene.graph import GraphClient
 from entra_hygiene.models import Finding, Severity
 
@@ -8,7 +9,7 @@ _ROLE_ASSIGNMENTS_URL = "/roleManagement/directory/roleAssignments?$expand=princ
 
 # Assignments to these roles are flagged HIGH; all others in the privileged set are MEDIUM.
 _HIGH_SEVERITY_ROLES = {
-    "62e90394-69f5-4237-9190-012177145e10": "Global Administrator",
+    GLOBAL_ADMIN_ROLE_TEMPLATE_ID: "Global Administrator",
     "e8611ab8-c189-46e8-94e1-60213ab1f814": "Privileged Role Administrator",
 }
 

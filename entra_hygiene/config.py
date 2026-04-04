@@ -17,9 +17,6 @@ class Settings(BaseSettings):
     stale_days: int = 90
     secret_expiry_warning_days: int = 30
 
-    sender_email: str = ""
-    report_email: str = ""
-
     scan_interval_hours: int = 6
     metrics_port: int = 5454
 
