@@ -2,7 +2,7 @@
 
 A command-line tool that audits your Entra ID (Azure AD) tenant and tells you what's wrong before someone else finds out.
 
-It connects to Microsoft Graph API, runs a suite of hygiene checks across users, apps, Conditional Access policies, groups, and roles, then produces a severity-graded report — in your terminal, as JSON, as a self-contained HTML file, or as live Prometheus metrics for your existing stack.
+It connects to Microsoft Graph API, runs a suite of hygiene checks across users, apps, Conditional Access policies, groups, and roles, then produces a severity-graded report - in your terminal, as JSON, as a self-contained HTML file, or as live Prometheus metrics for your existing stack.
 
 Built for IT admins and security teams at SMBs who need a scriptable, schedulable alternative to clicking through the Azure portal.
 
@@ -19,7 +19,7 @@ cp .env.example .env
 # Fill in TENANT_ID, CLIENT_ID, CLIENT_SECRET in .env
 ```
 
-**Background service** — rescans on interval, exposes Prometheus metrics:
+**Background service** - rescans on interval, exposes Prometheus metrics:
 
 ```bash
 docker compose up
@@ -156,7 +156,7 @@ entra_hygiene_scan_success
 
 A scheduled workflow runs every Sunday at 09:00 UTC. It uploads HTML and JSON reports as workflow artifacts (retained 30 days) and optionally emails the HTML report.
 
-The workflow file is already in the repo at `.github/workflows/weekly-scan.yml`. GitHub picks it up automatically — no installation required.
+The workflow file is already in the repo at `.github/workflows/weekly-scan.yml`. GitHub picks it up automatically - no installation required.
 
 **Enabling the workflow:**
 
@@ -178,7 +178,7 @@ Go to **Settings → Secrets and variables → Actions → New repository secret
 
 Secrets are encrypted and never visible after saving. They are injected as environment variables at runtime only.
 
-If `SENDER_EMAIL` or `REPORT_EMAIL` are absent the email step is skipped — the scan and artifact upload still run.
+If `SENDER_EMAIL` or `REPORT_EMAIL` are absent the email step is skipped - the scan and artifact upload still run.
 
 **Manual runs:**
 
@@ -198,14 +198,14 @@ After each run: Actions → click the run → scroll to **Artifacts** → downlo
 | `1` | Auth failure or invalid configuration |
 | `2` | Scan completed, findings were found |
 
-Exit code `2` is a normal operational state — your automation should treat it as a non-error.
+Exit code `2` is a normal operational state - your automation should treat it as a non-error.
 
 ---
 
 ## Design Principles
 
-- **Read-only.** This tool never modifies your tenant. Every finding includes a remediation suggestion — acting on it is always a manual step.
+- **Read-only.** This tool never modifies your tenant. Every finding includes a remediation suggestion - acting on it is always a manual step.
 - **Fail loudly.** Missing permissions or auth failures produce a clear error, not a silent partial scan.
 - **Checks are independent.** One failing check never blocks the rest.
-- **Self-contained output.** The HTML report is a single file with no external dependencies — safe to email or archive.
+- **Self-contained output.** The HTML report is a single file with no external dependencies - safe to email or archive.
 - **No telemetry.** Data goes to Microsoft Graph only. Nothing leaves your environment.

@@ -83,7 +83,7 @@ class BlockLegacyAuthCheck(BaseCheck):
     async def run(self, graph: GraphClient) -> list[Finding]:
         policies = await graph.get_all(_CA_POLICIES_URL)
         # Legacy auth requires both exchangeActiveSync and other to be blocked.
-        # Check across all enabled blocking policies — tenants may split these.
+        # Check across all enabled blocking policies - tenants may split these.
         blocks_eas = False
         blocks_other = False
         for p in policies:

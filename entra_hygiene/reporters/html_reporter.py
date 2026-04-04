@@ -33,7 +33,7 @@ TEMPLATE = _env.from_string("""\
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Entra Hygiene \u2014 {{ result.tenant_id }}</title>
+<title>Entra Hygiene - {{ result.tenant_id }}</title>
 <style>
 body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; -webkit-font-smoothing: antialiased; }
 table { border-collapse: collapse; }
@@ -93,7 +93,7 @@ table { border-collapse: collapse; }
   {% if not result.findings %}
   <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;border:1px solid #27272a;">
     <tr>
-      <td style="padding:24px;text-align:center;color:#4ade80;font-size:13px;">No findings \u2014 tenant looks clean.</td>
+      <td style="padding:24px;text-align:center;color:#4ade80;font-size:13px;">No findings - tenant looks clean.</td>
     </tr>
   </table>
   {% else %}

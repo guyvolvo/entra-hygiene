@@ -18,7 +18,7 @@ def _iso_in(days: int) -> str:
 
 
 # ---------------------------------------------------------------------------
-# APPS_001 — Expiring / Expired App Credentials
+# APPS_001 - Expiring / Expired App Credentials
 # ---------------------------------------------------------------------------
 
 class TestExpiringSecrets:
@@ -141,7 +141,7 @@ class TestExpiringSecrets:
 
 
 # ---------------------------------------------------------------------------
-# APPS_002 — Ownerless App Registrations
+# APPS_002 - Ownerless App Registrations
 # ---------------------------------------------------------------------------
 
 class TestOwnerlessApps:

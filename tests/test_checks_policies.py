@@ -39,7 +39,7 @@ def _policy(
 
 
 # ---------------------------------------------------------------------------
-# POLICY_001 — MFA for All Users
+# POLICY_001 - MFA for All Users
 # ---------------------------------------------------------------------------
 
 class TestMfaForAll:
@@ -90,7 +90,7 @@ class TestMfaForAll:
 
 
 # ---------------------------------------------------------------------------
-# POLICY_002 — Block Legacy Authentication
+# POLICY_002 - Block Legacy Authentication
 # ---------------------------------------------------------------------------
 
 class TestBlockLegacyAuth:
@@ -144,7 +144,7 @@ class TestBlockLegacyAuth:
 
 
 # ---------------------------------------------------------------------------
-# POLICY_003 — Report-Only Policies
+# POLICY_003 - Report-Only Policies
 # ---------------------------------------------------------------------------
 
 class TestReportOnlyPolicies:
