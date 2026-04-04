@@ -1,7 +1,7 @@
-# Environment & secrets — .env committed intentionally (private repo only, see CLAUDE.md before going public)
-*.env
+# Environment & secrets
+.env
 .env.*
-!.env
+!.env.example
 
 # Python
 __pycache__/
