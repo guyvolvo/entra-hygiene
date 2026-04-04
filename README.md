@@ -35,44 +35,39 @@ Built for IT admins and security teams at SMBs who need a scriptable, schedulabl
 
 ## Quick Start
 
-**Requirements:** Python 3.11+, [uv](https://github.com/astral-sh/uv)
+**Requirements:** Docker
 
 ```bash
 git clone https://github.com/guyvolvo/entra-hygiene.git
 cd entra-hygiene
-uv sync
 ```
 
-Fill in your credentials in `.env`, then run:
+Fill in your credentials in `.env`, then choose a mode:
 
-```bash
-uv run entra-hygiene scan
-```
-
-No app registration yet? Try device-code auth first:
-
-```bash
-uv run entra-hygiene scan --auth device-code
-```
-
-Output options:
-
-```bash
-uv run entra-hygiene scan --output html > report.html
-uv run entra-hygiene scan --output json > report.json
-```
-
----
-
-## Run with Docker
-
-The intended production deployment. Clone the repo, fill in `.env`, and run:
+**Background service** — rescans on an interval, exposes Prometheus metrics on `:5555`:
 
 ```bash
 docker compose up
 ```
 
-The container starts in `serve` mode — it rescans your tenant on a configurable interval and exposes Prometheus metrics on port `5555`. Point your existing Prometheus instance at it and you're done.
+**One-off scan** — run it manually, get a report:
+
+```bash
+# Terminal output
+docker run --env-file .env entra-hygiene scan
+
+# HTML report
+docker run --env-file .env entra-hygiene scan --output html > report.html
+
+# JSON output
+docker run --env-file .env entra-hygiene scan --output json > report.json
+```
+
+No app registration yet? Try device-code auth first:
+
+```bash
+docker run -it --env-file .env entra-hygiene scan --auth device-code
+```
 
 ---
 

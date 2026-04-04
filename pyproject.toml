@@ -21,7 +21,7 @@ dependencies = [
 [project.scripts]
 entra-hygiene = "entra_hygiene.cli:app"
 
-[dependency-groups]
+[project.optional-dependencies]
 dev = [
     "pytest>=8.2",
     "pytest-asyncio>=0.23",
