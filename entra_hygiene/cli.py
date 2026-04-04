@@ -226,7 +226,7 @@ def serve(
 
     start_metrics_server(settings.metrics_port)
     console.print(f"Metrics endpoint: http://0.0.0.0:{settings.metrics_port}/metrics")
-    console.print(f"Scan interval:    {settings.scan_interval_hours}h")
+    console.print(f"Scan interval:    {settings.scan_interval_minutes}m")
 
     async def _loop() -> None:
         while True:
@@ -241,11 +241,11 @@ def serve(
                     f"[dim]{datetime.now():%Y-%m-%d %H:%M:%S}[/dim] "
                     f"Scan complete. {len(result.findings)} findings, "
                     f"{len(result.errors)} errors. "
-                    f"Next scan in {settings.scan_interval_hours}h."
+                    f"Next scan in {settings.scan_interval_minutes}m."
                 )
             except AuthError as e:
                 console.print(f"[bold red]Auth error:[/bold red] {e}")
-            await asyncio.sleep(settings.scan_interval_hours * 3600)
+            await asyncio.sleep(settings.scan_interval_minutes * 60)
 
     asyncio.run(_loop())
 

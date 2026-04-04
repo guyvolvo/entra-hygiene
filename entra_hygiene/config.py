@@ -17,7 +17,7 @@ class Settings(BaseSettings):
     stale_days: int = 90
     secret_expiry_warning_days: int = 30
 
-    scan_interval_hours: int = 6
+    scan_interval_minutes: int = 15
     metrics_port: int = 5454
 
 

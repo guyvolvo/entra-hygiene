@@ -96,7 +96,7 @@ STALE_DAYS=90
 SECRET_EXPIRY_WARNING_DAYS=30
 
 # Optional -- serve mode (these are the defaults)
-SCAN_INTERVAL_HOURS=6
+SCAN_INTERVAL_MINUTES=15
 METRICS_PORT=5454
 
 # Optional -- email report after each scan (requires Mail.Send permission)
@@ -128,7 +128,7 @@ REPORT_EMAIL=recipient@yourdomain.com
 
 ## Serve Mode
 
-`docker compose up` runs the tool as a long-lived service. It performs a full scan on startup, then rescans every `SCAN_INTERVAL_HOURS` hours, re-authenticating before each run to handle token expiry.
+`docker compose up` runs the tool as a long-lived service. It performs a full scan on startup, then rescans every `SCAN_INTERVAL_MINUTES` minutes, re-authenticating before each run to handle token expiry.
 
 Metrics are exposed at `:5454/metrics` in Prometheus text format. Add this to your existing scrape config:
 
