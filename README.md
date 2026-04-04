@@ -42,7 +42,13 @@ git clone https://github.com/guyvolvo/entra-hygiene.git
 cd entra-hygiene
 ```
 
-Fill in your credentials in `.env`, then choose a mode:
+Fill in your credentials in `.env`, then build the image:
+
+```bash
+docker build -t entra-hygiene .
+```
+
+Then choose a mode:
 
 **Background service** — rescans on an interval, exposes Prometheus metrics on `:5555`:
 
