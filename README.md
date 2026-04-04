@@ -75,13 +75,13 @@ docker run -it --env-file .env entra-hygiene scan --auth device-code
 
 ## Prometheus Integration
 
-When running in serve mode the tool exposes `/metrics` on `:5555`. Add this to your Prometheus scrape config:
+When running in serve mode the tool exposes `/metrics` on `:5454`. Add this to your Prometheus scrape config:
 
 ```yaml
 scrape_configs:
   - job_name: entra-hygiene
     static_configs:
-      - targets: ["<host>:5555"]
+      - targets: ["<host>:5454"]
 ```
 
 **Exposed metrics:**
@@ -114,6 +114,9 @@ The tool needs an App Registration in Entra ID with the following **Application 
 | `Application.Read.All` | Read app registrations and credential expiry |
 | `Policy.Read.All` | Read Conditional Access policies |
 | `RoleManagement.Read.Directory` | Read directory role assignments |
+| `Mail.Send` | Send HTML scan reports by email (optional) |
+
+> `Mail.Send` is only required if you use the `SENDER_EMAIL` / `REPORT_EMAIL` email feature. With application permission it can send as any mailbox in the tenant — scope it to a dedicated alerts mailbox via an [Exchange application access policy](https://learn.microsoft.com/en-us/graph/auth-limit-mailbox-access) if your org requires it.
 
 **Steps:**
 1. Azure Portal → Entra ID → App registrations → New registration
@@ -137,7 +140,11 @@ CLIENT_SECRET=your-client-secret
 STALE_DAYS=90
 SECRET_EXPIRY_WARNING_DAYS=30
 SCAN_INTERVAL_HOURS=6
-METRICS_PORT=5555
+METRICS_PORT=5454
+
+# Optional -- email report after each scan (requires Mail.Send permission)
+SENDER_EMAIL=alerts@yourdomain.com
+REPORT_EMAIL=recipient@yourdomain.com
 ```
 
 ---
