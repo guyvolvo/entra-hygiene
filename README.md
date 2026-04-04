@@ -8,6 +8,26 @@ Built for IT admins and security teams at SMBs who need a scriptable, schedulabl
 
 ---
 
+## What It Checks
+
+| ID | Severity | Check |
+|---|---|---|
+| `USER_001` | MEDIUM | Accounts with no sign-in activity beyond the configured threshold (default 90 days) |
+| `USER_002` | HIGH | Enabled accounts with no MFA method registered |
+| `USER_003` | CRITICAL / HIGH | Guest accounts holding directory roles |
+| `USER_004` | HIGH / CRITICAL | Global Admin count out of range, or stale Global Admin accounts |
+| `APPS_001` | CRITICAL / HIGH | App secrets and certificates that are expired or expiring within 30 days |
+| `APPS_002` | MEDIUM | App registrations with no assigned owners |
+| `POLICY_001` | HIGH | No enabled CA policy enforcing MFA for all users across all apps |
+| `POLICY_002` | HIGH | Legacy authentication (Exchange ActiveSync, IMAP, POP3, SMTP Auth) not fully blocked |
+| `POLICY_003` | LOW | Conditional Access policies stuck in report-only mode |
+| `ROLES_001` | HIGH / MEDIUM | Users with permanent (non-PIM) assignments to privileged roles |
+| `ROLES_002` | HIGH | Service principals holding privileged directory roles |
+| `GROUPS_001` | MEDIUM | Groups with no assigned owners |
+| `GROUPS_002` | LOW | Empty groups with no members |
+
+---
+
 ## Quick Start
 
 **Requirements:** Docker
@@ -103,26 +123,6 @@ METRICS_PORT=5454
 SENDER_EMAIL=alerts@yourdomain.com
 REPORT_EMAIL=recipient@yourdomain.com
 ```
-
----
-
-## What It Checks
-
-| ID | Severity | Check |
-|---|---|---|
-| `USER_001` | MEDIUM | Accounts with no sign-in activity beyond the configured threshold (default 90 days) |
-| `USER_002` | HIGH | Enabled accounts with no MFA method registered |
-| `USER_003` | CRITICAL / HIGH | Guest accounts holding directory roles |
-| `USER_004` | HIGH / CRITICAL | Global Admin count out of range, or stale Global Admin accounts |
-| `APPS_001` | CRITICAL / HIGH | App secrets and certificates that are expired or expiring within 30 days |
-| `APPS_002` | MEDIUM | App registrations with no assigned owners |
-| `POLICY_001` | HIGH | No enabled CA policy enforcing MFA for all users across all apps |
-| `POLICY_002` | HIGH | Legacy authentication (Exchange ActiveSync, IMAP, POP3, SMTP Auth) not fully blocked |
-| `POLICY_003` | LOW | Conditional Access policies stuck in report-only mode |
-| `ROLES_001` | HIGH / MEDIUM | Users with permanent (non-PIM) assignments to privileged roles |
-| `ROLES_002` | HIGH | Service principals holding privileged directory roles |
-| `GROUPS_001` | MEDIUM | Groups with no assigned owners |
-| `GROUPS_002` | LOW | Empty groups with no members |
 
 ---
 
