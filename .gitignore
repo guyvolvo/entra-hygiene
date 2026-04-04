@@ -1,0 +1,57 @@
+# Environment & secrets
+.env
+*.env
+.env.*
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+.eggs/
+*.egg
+
+# uv / virtualenv
+.venv/
+venv/
+.uv/
+
+# pytest / coverage
+.pytest_cache/
+.coverage
+coverage.xml
+htmlcov/
+
+# Reports (generated output, don't commit)
+reports/
+*.html
+!templates/*.html
+
+# Ruff cache
+.ruff_cache/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docker
+docker/secrets/
+
+# Claude / AI agent config
+.claude/
+CLAUDE.md
+memory/
+.cursorrules
+.aider*
+.continue/
+.copilot/
