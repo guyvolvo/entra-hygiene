@@ -2,13 +2,11 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
-RUN pip install uv
-
 COPY pyproject.toml .
-RUN uv sync --no-dev
-
 COPY entra_hygiene/ ./entra_hygiene/
 
-EXPOSE 9090
+RUN pip install --no-cache-dir .
 
-CMD ["uv", "run", "entra-hygiene", "serve"]
+EXPOSE 5454
+
+CMD ["entra-hygiene", "scan"]
