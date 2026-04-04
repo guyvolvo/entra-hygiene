@@ -30,6 +30,7 @@ from entra_hygiene.config import settings
 from entra_hygiene.graph import GraphClient
 from entra_hygiene.models import CheckError, Finding, ScanResult, Severity
 from entra_hygiene.reporters.html_reporter import render_html
+from entra_hygiene.reporters.prometheus_reporter import start_metrics_server, update_metrics
 
 app = typer.Typer(
     name="entra-hygiene",
@@ -208,6 +209,45 @@ def scan(
 
     if not result.success:
         raise typer.Exit(code=2)
+
+
+@app.command()
+def serve(
+    auth: str = typer.Option(
+        "client-credentials",
+        "--auth",
+        help="Authentication mode. Only client-credentials is supported for serve mode.",
+    ),
+) -> None:
+    """Run as a long-lived service, rescanning on interval and exposing /metrics."""
+    if auth == "device-code":
+        console.print("[bold red]device-code auth is not supported in serve mode.[/bold red]")
+        raise typer.Exit(code=1)
+
+    start_metrics_server(settings.metrics_port)
+    console.print(f"Metrics endpoint: http://0.0.0.0:{settings.metrics_port}/metrics")
+    console.print(f"Scan interval:    {settings.scan_interval_hours}h")
+
+    async def _loop() -> None:
+        while True:
+            console.print(f"[dim]{datetime.now():%Y-%m-%d %H:%M:%S}[/dim] Starting scan...")
+            try:
+                token = get_token(auth)
+                graph = GraphClient(access_token=token)
+                result = await _run_scan(graph, ALL_CHECKS)
+                await graph.close()
+                update_metrics(result)
+                console.print(
+                    f"[dim]{datetime.now():%Y-%m-%d %H:%M:%S}[/dim] "
+                    f"Scan complete. {len(result.findings)} findings, "
+                    f"{len(result.errors)} errors. "
+                    f"Next scan in {settings.scan_interval_hours}h."
+                )
+            except AuthError as e:
+                console.print(f"[bold red]Auth error:[/bold red] {e}")
+            await asyncio.sleep(settings.scan_interval_hours * 3600)
+
+    asyncio.run(_loop())
 
 
 if __name__ == "__main__":

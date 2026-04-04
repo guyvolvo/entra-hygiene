@@ -9,4 +9,4 @@ RUN pip install --no-cache-dir .
 
 EXPOSE 5454
 
-CMD ["entra-hygiene", "scan"]
+CMD ["entra-hygiene", "serve"]

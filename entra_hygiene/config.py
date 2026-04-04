@@ -20,7 +20,7 @@ class Settings(BaseSettings):
     report_email: str = ""
 
     scan_interval_hours: int = 6
-    metrics_port: int = 5555
+    metrics_port: int = 5454
 
 
 settings = Settings()
