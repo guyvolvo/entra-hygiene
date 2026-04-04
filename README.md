@@ -42,23 +42,19 @@ git clone https://github.com/guyvolvo/entra-hygiene.git
 cd entra-hygiene
 ```
 
-Fill in your credentials in `.env`, then build the image:
+Fill in your credentials in `.env`, then choose a mode:
 
-```bash
-docker build -t entra-hygiene .
-```
-
-Then choose a mode:
-
-**Background service** — rescans on an interval, exposes Prometheus metrics on `:5555`:
+**Background service** — Compose builds and starts everything:
 
 ```bash
 docker compose up
 ```
 
-**One-off scan** — run it manually, get a report:
+**One-off scan** — build first, then run:
 
 ```bash
+docker build -t entra-hygiene .
+
 # Terminal output
 docker run --env-file .env entra-hygiene scan
 
