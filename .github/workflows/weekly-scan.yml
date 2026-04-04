@@ -1,0 +1,70 @@
+name: Entra Hygiene Scan
+
+on:
+  schedule:
+    - cron: '0 9 * * 0'  # Sunday 09:00 UTC
+  workflow_dispatch:
+    inputs:
+      checks:
+        description: 'Check IDs to run (comma-separated). Leave empty to run all.'
+        required: false
+        default: ''
+      send_email:
+        description: 'Send HTML report by email after scan'
+        type: boolean
+        default: true
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install
+        run: pip install --quiet .
+
+      - name: Run scan
+        env:
+          TENANT_ID: ${{ secrets.TENANT_ID }}
+          CLIENT_ID: ${{ secrets.CLIENT_ID }}
+          CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
+          CHECKS_INPUT: ${{ github.event.inputs.checks }}
+        run: |
+          if [ -n "$CHECKS_INPUT" ]; then
+            CHECKS_FLAG="--checks $CHECKS_INPUT"
+          else
+            CHECKS_FLAG=""
+          fi
+          entra-hygiene scan --output html $CHECKS_FLAG > report.html
+          html_code=$?
+          entra-hygiene scan --output json $CHECKS_FLAG > report.json
+          json_code=$?
+          # Exit 2 means findings exist -- expected and not a failure.
+          # Exit 1 means auth error or bad config -- fail the job.
+          [ $html_code -eq 0 ] || [ $html_code -eq 2 ]
+          [ $json_code -eq 0 ] || [ $json_code -eq 2 ]
+
+      - name: Upload reports
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: entra-hygiene-${{ github.run_id }}
+          path: |
+            report.html
+            report.json
+          retention-days: 30
+
+      - name: Email report
+        if: github.event.inputs.send_email != 'false'
+        env:
+          TENANT_ID: ${{ secrets.TENANT_ID }}
+          CLIENT_ID: ${{ secrets.CLIENT_ID }}
+          CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
+          SENDER_EMAIL: ${{ secrets.SENDER_EMAIL }}
+          REPORT_EMAIL: ${{ secrets.REPORT_EMAIL }}
+        run: python .github/scripts/send_report.py
