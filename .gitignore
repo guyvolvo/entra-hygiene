@@ -1,7 +1,7 @@
-# Environment & secrets
-.env
+# Environment & secrets — .env committed intentionally (private repo only, see CLAUDE.md before going public)
 *.env
 .env.*
+!.env
 
 # Python
 __pycache__/
@@ -49,7 +49,6 @@ docker/secrets/
 
 # Claude / AI agent config
 .claude/
-CLAUDE.md
 memory/
 .cursorrules
 .aider*
