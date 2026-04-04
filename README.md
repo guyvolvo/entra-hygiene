@@ -2,7 +2,7 @@
 
 A command-line tool that audits your Entra ID (Azure AD) tenant and tells you what's wrong before someone else finds out.
 
-It connects to Microsoft Graph API, runs a suite of hygiene checks across users, apps, Conditional Access policies, groups, and roles, then produces a severity-graded report — in your terminal, as JSON, or as a self-contained HTML file you can email to your team.
+It connects to Microsoft Graph API, runs a suite of hygiene checks across users, apps, Conditional Access policies, groups, and roles, then produces a severity-graded report — in your terminal, as JSON, as a self-contained HTML file, or as live Prometheus metrics for your existing Grafana stack.
 
 Built for IT admins and security teams at SMBs who need a scriptable, schedulable alternative to clicking through the Azure portal.
 
@@ -43,7 +43,7 @@ cd entra-hygiene
 uv sync
 ```
 
-Copy `.env` and fill in your credentials (see setup below), then run:
+Fill in your credentials in `.env`, then run:
 
 ```bash
 uv run entra-hygiene scan
@@ -60,6 +60,47 @@ Output options:
 ```bash
 uv run entra-hygiene scan --output html > report.html
 uv run entra-hygiene scan --output json > report.json
+```
+
+---
+
+## Run with Docker
+
+The intended production deployment. Clone the repo, fill in `.env`, and run:
+
+```bash
+docker compose up
+```
+
+The container starts in `serve` mode — it rescans your tenant on a configurable interval and exposes Prometheus metrics on port `5555`. Point your existing Prometheus instance at it and you're done.
+
+---
+
+## Prometheus Integration
+
+When running in serve mode the tool exposes `/metrics` on `:5555`. Add this to your Prometheus scrape config:
+
+```yaml
+scrape_configs:
+  - job_name: entra-hygiene
+    static_configs:
+      - targets: ["<host>:5555"]
+```
+
+**Exposed metrics:**
+
+```
+entra_hygiene_findings_total{severity="critical|high|medium|low"}
+entra_hygiene_stale_accounts_total
+entra_hygiene_accounts_without_mfa_total
+entra_hygiene_expiring_secrets_total{days_bucket="30|60|90"}
+entra_hygiene_expired_secrets_total
+entra_hygiene_global_admins_total
+entra_hygiene_ca_policy_gaps_total
+entra_hygiene_privileged_external_users_total
+entra_hygiene_last_scan_timestamp_seconds
+entra_hygiene_scan_duration_seconds
+entra_hygiene_scan_success
 ```
 
 ---
@@ -98,25 +139,9 @@ CLIENT_SECRET=your-client-secret
 # Optional — these are the defaults
 STALE_DAYS=90
 SECRET_EXPIRY_WARNING_DAYS=30
+SCAN_INTERVAL_HOURS=6
+METRICS_PORT=5555
 ```
-
----
-
-## Deployment Options
-
-**Local CLI** — run on demand from any machine with the repo cloned.
-
-**Docker** — run as a scheduled container, output the report to a mounted volume.
-
-```bash
-docker build -f docker/Dockerfile -t entra-hygiene .
-docker run --env-file .env entra-hygiene scan --output html > report.html
-```
-
-**GitHub Actions** — weekly scheduled scan, report uploaded as a workflow artifact.
-See `.github/workflows/weekly-scan.yml`.
-
-**Azure Function** *(planned)* — serverless, runs on schedule using Managed Identity.
 
 ---
 
