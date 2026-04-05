@@ -13,9 +13,7 @@ def _group(gid: str, name: str) -> dict:
     return {"id": gid, "displayName": name, "groupTypes": []}
 
 
-# ---------------------------------------------------------------------------
-# GROUPS_001 -- Ownerless Groups
-# ---------------------------------------------------------------------------
+# GROUPS_001:Ownerless Groups
 
 class TestOwnerlessGroups:
     @pytest.mark.asyncio
@@ -59,9 +57,7 @@ class TestOwnerlessGroups:
         assert len(findings) == 0
 
 
-# ---------------------------------------------------------------------------
-# GROUPS_002 -- Empty Groups
-# ---------------------------------------------------------------------------
+# GROUPS_002:Empty Groups
 
 class TestEmptyGroups:
     @pytest.mark.asyncio

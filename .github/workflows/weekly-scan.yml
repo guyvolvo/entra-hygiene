@@ -44,8 +44,8 @@ jobs:
           html_code=$?
           entra-hygiene scan --output json $CHECKS_FLAG > report.json
           json_code=$?
-          # Exit 2 means findings exist -- expected and not a failure.
-          # Exit 1 means auth error or bad config -- fail the job.
+          # Exit 2 means findings exist, not a failure.
+          # Exit 1 means auth error or bad config, fail the job.
           [ $html_code -eq 0 ] || [ $html_code -eq 2 ]
           [ $json_code -eq 0 ] || [ $json_code -eq 2 ]
 

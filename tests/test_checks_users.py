@@ -19,9 +19,7 @@ def _iso(days_ago: int) -> str:
     return dt.isoformat()
 
 
-# ---------------------------------------------------------------------------
 # USER_001 - Stale Accounts
-# ---------------------------------------------------------------------------
 
 class TestStaleAccounts:
     @pytest.mark.asyncio
@@ -96,9 +94,7 @@ class TestStaleAccounts:
         assert len(findings) == 0
 
 
-# ---------------------------------------------------------------------------
 # USER_002 - MFA Gaps
-# ---------------------------------------------------------------------------
 
 class TestMfaGaps:
     @pytest.mark.asyncio
@@ -145,9 +141,7 @@ class TestMfaGaps:
         assert len(findings) == 0
 
 
-# ---------------------------------------------------------------------------
 # USER_003 - Privileged Guest Accounts
-# ---------------------------------------------------------------------------
 
 GLOBAL_ADMIN_ROLE_ID = "62e90394-69f5-4237-9190-012177145e10"
 OTHER_ROLE_ID = "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"
@@ -219,9 +213,7 @@ class TestPrivilegedGuest:
         assert len(findings) == 0
 
 
-# ---------------------------------------------------------------------------
 # USER_004 - Global Admin Count
-# ---------------------------------------------------------------------------
 
 class TestGlobalAdminCount:
     def _members_url(self):

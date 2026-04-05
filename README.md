@@ -113,15 +113,15 @@ TENANT_ID=your-tenant-id
 CLIENT_ID=your-app-client-id
 CLIENT_SECRET=your-client-secret
 
-# Optional -- scan thresholds (these are the defaults)
+# Optional: scan thresholds (these are the defaults)
 STALE_DAYS=90
 SECRET_EXPIRY_WARNING_DAYS=30
 
-# Optional -- serve mode (these are the defaults)
+# Optional: serve mode (these are the defaults)
 SCAN_INTERVAL_MINUTES=15
 METRICS_PORT=5454
 
-# Optional -- email report after each scan (requires Mail.Send permission)
+# Optional: email report after each scan (requires Mail.Send permission)
 SENDER_EMAIL=alerts@yourdomain.com
 REPORT_EMAIL=recipient@yourdomain.com
 ```

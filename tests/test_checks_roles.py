@@ -50,9 +50,7 @@ def _sp_assignment(
     }
 
 
-# ---------------------------------------------------------------------------
 # ROLES_001 -- Permanent Privileged Assignments
-# ---------------------------------------------------------------------------
 
 class TestPermanentPrivilegedAssignments:
     @pytest.mark.asyncio
@@ -106,9 +104,7 @@ class TestPermanentPrivilegedAssignments:
         assert len(findings) == 0
 
 
-# ---------------------------------------------------------------------------
 # ROLES_002 -- Service Principals with Privileged Roles
-# ---------------------------------------------------------------------------
 
 class TestPrivilegedServicePrincipals:
     @pytest.mark.asyncio

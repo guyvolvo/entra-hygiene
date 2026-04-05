@@ -38,9 +38,7 @@ def _policy(
     }
 
 
-# ---------------------------------------------------------------------------
 # POLICY_001 - MFA for All Users
-# ---------------------------------------------------------------------------
 
 class TestMfaForAll:
     @pytest.mark.asyncio
@@ -89,9 +87,7 @@ class TestMfaForAll:
         assert len(findings) == 1
 
 
-# ---------------------------------------------------------------------------
 # POLICY_002 - Block Legacy Authentication
-# ---------------------------------------------------------------------------
 
 class TestBlockLegacyAuth:
     @pytest.mark.asyncio
@@ -143,9 +139,7 @@ class TestBlockLegacyAuth:
         assert len(findings) == 1
 
 
-# ---------------------------------------------------------------------------
 # POLICY_003 - Report-Only Policies
-# ---------------------------------------------------------------------------
 
 class TestReportOnlyPolicies:
     @pytest.mark.asyncio

@@ -17,9 +17,7 @@ def _iso_in(days: int) -> str:
     return dt.strftime("%Y-%m-%dT%H:%M:%SZ")
 
 
-# ---------------------------------------------------------------------------
 # APPS_001 - Expiring / Expired App Credentials
-# ---------------------------------------------------------------------------
 
 class TestExpiringSecrets:
     @pytest.mark.asyncio
@@ -140,9 +138,7 @@ class TestExpiringSecrets:
         assert len(findings) == 0
 
 
-# ---------------------------------------------------------------------------
 # APPS_002 - Ownerless App Registrations
-# ---------------------------------------------------------------------------
 
 class TestOwnerlessApps:
     @pytest.mark.asyncio
