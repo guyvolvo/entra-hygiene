@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import asyncio
+
 import httpx
 
 BASE_URL = "https://graph.microsoft.com/v1.0"
@@ -22,11 +24,14 @@ class GraphClient:
             timeout=30.0,
         )
 
-    async def get(self, endpoint: str) -> dict:
+    async def get(self, endpoint: str, _retries: int = 3) -> dict:
         response = await self._client.get(endpoint)
         if response.status_code == 429:
-            retry_after = response.headers.get("Retry-After", "unknown")
-            raise GraphError(429, f"Throttled. Retry after {retry_after}s")
+            if _retries > 0:
+                retry_after = int(response.headers.get("Retry-After", 10))
+                await asyncio.sleep(retry_after)
+                return await self.get(endpoint, _retries - 1)
+            raise GraphError(429, "Throttled - max retries exceeded")
         if response.status_code in (401, 403):
             body = response.json().get("error", {})
             raise GraphError(response.status_code, body.get("message", "Access denied"))

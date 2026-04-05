@@ -42,6 +42,7 @@ table { border-collapse: collapse; }
 </head>
 <body bgcolor="#09090b" style="margin:0;padding:0;background-color:#09090b;color:#e4e4e7;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:13px;line-height:1.4;">
 
+<!--[if gte mso 9]><table width="100%" cellpadding="0" cellspacing="0" bgcolor="#09090b"><tr><td bgcolor="#09090b" style="padding:16px;"><![endif]-->
 <table width="100%" cellpadding="0" cellspacing="0" bgcolor="#09090b" style="background-color:#09090b;border-collapse:collapse;">
 <tr><td bgcolor="#09090b" style="background-color:#09090b;padding:16px;">
 
@@ -129,6 +130,7 @@ table { border-collapse: collapse; }
 
 </td></tr>
 </table>
+<!--[if gte mso 9]></td></tr></table><![endif]-->
 </body>
 </html>
 """)
