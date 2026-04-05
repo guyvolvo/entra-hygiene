@@ -5,6 +5,7 @@ import base64
 import os
 from datetime import datetime
 from typing import Optional
+from urllib.parse import quote
 
 import httpx
 import typer
@@ -72,7 +73,9 @@ async def _run_check(check, graph: GraphClient) -> tuple[str, list[Finding], Che
     try:
         findings = await check.run(graph)
         return check.id, findings, None
-    except Exception as e:
+    except (Exception,) as e:
+        if isinstance(e, (KeyboardInterrupt, SystemExit)):
+            raise
         error = CheckError(check_id=check.id, check_title=check.title, error=str(e))
         return check.id, [], error
 
@@ -135,7 +138,7 @@ def _send_email_report(token: str, result: ScanResult) -> None:
         }
     }
     response = httpx.post(
-        f"https://graph.microsoft.com/v1.0/users/{sender}/sendMail",
+        f"https://graph.microsoft.com/v1.0/users/{quote(sender)}/sendMail",
         json=payload,
         headers={"Authorization": f"Bearer {token}"},
         timeout=30,
@@ -244,6 +247,7 @@ def scan(
             raise typer.Exit(code=1)
 
     result = asyncio.run(_run_scan(graph, check_list))
+    asyncio.run(graph.close())
 
     if output == "json":
         _print_json_report(result)
@@ -254,7 +258,9 @@ def scan(
 
     _send_email_report(token, result)
 
-    if not result.success:
+    if result.errors:
+        raise typer.Exit(code=1)
+    if result.findings:
         raise typer.Exit(code=2)
 
 

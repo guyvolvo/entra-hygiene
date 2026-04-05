@@ -40,6 +40,7 @@ def update_metrics(result: ScanResult) -> None:
     for severity, count in result.counts_by_severity.items():
         _findings_by_severity.labels(severity=severity.value).set(count)
 
+    _findings_by_check.clear()
     check_counts: dict[str, int] = {}
     for finding in result.findings:
         check_counts[finding.check_id] = check_counts.get(finding.check_id, 0) + 1

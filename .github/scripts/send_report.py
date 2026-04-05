@@ -8,6 +8,7 @@ from __future__ import annotations
 import base64
 import os
 import sys
+from urllib.parse import quote
 
 import httpx
 import msal
@@ -65,7 +66,7 @@ payload = {
 }
 
 response = httpx.post(
-    f"https://graph.microsoft.com/v1.0/users/{SENDER_EMAIL}/sendMail",
+    f"https://graph.microsoft.com/v1.0/users/{quote(SENDER_EMAIL)}/sendMail",
     json=payload,
     headers={"Authorization": f"Bearer {token}"},
     timeout=30,

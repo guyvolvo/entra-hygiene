@@ -20,6 +20,7 @@ class GraphClient:
             headers={
                 "Authorization": f"Bearer {access_token}",
                 "ConsistencyLevel": "eventual",
+                "User-Agent": "entra-hygiene/0.1.0",
             },
             timeout=30.0,
         )
@@ -32,11 +33,19 @@ class GraphClient:
                 await asyncio.sleep(retry_after)
                 return await self.get(endpoint, _retries - 1)
             raise GraphError(429, "Throttled - max retries exceeded")
+        if response.status_code == 503:
+            if _retries > 0:
+                await asyncio.sleep(10)
+                return await self.get(endpoint, _retries - 1)
+            raise GraphError(503, "Service unavailable - max retries exceeded")
         if response.status_code in (401, 403):
             body = response.json().get("error", {})
             raise GraphError(response.status_code, body.get("message", "Access denied"))
         response.raise_for_status()
-        return response.json()
+        try:
+            return response.json()
+        except ValueError as e:
+            raise GraphError(response.status_code, f"Invalid JSON in response: {e}") from e
 
     async def get_all(self, endpoint: str) -> list[dict]:
         """Fetch all pages of a collection endpoint via @odata.nextLink."""
