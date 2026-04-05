@@ -60,33 +60,27 @@ class StaleAccountsCheck(BaseCheck):
 class MfaGapsCheck(BaseCheck):
     id = "USER_002"
     title = "Accounts Without MFA"
-    description = "Enabled user accounts that have not registered any MFA method"
+    description = "User accounts that have not registered any MFA method"
 
     async def run(self, graph: GraphClient) -> list[Finding]:
-        users = await graph.get_all(
-            "/users?$select=id,displayName,userPrincipalName,accountEnabled,userType"
-            "&$filter=accountEnabled eq true&$count=true"
+        # Single call replaces the previous per-user loop.
+        # Requires UserAuthenticationMethod.Read.All and Reports.Read.All.
+        records = await graph.get_all(
+            "/reports/authenticationMethods/userRegistrationDetails"
+            "?$filter=isMfaRegistered eq false"
         )
         findings: list[Finding] = []
-        for user in users:
-            methods = await graph.get_all(
-                f"/users/{user['id']}/authentication/methods"
-            )
-            # A user with only the password method has no MFA registered.
-            # Password method type: #microsoft.graph.passwordAuthenticationMethod
-            non_password = [
-                m for m in methods
-                if m.get("@odata.type") != "#microsoft.graph.passwordAuthenticationMethod"
-            ]
-            if not non_password:
-                findings.append(Finding(
-                    check_id=self.id,
-                    severity=Severity.HIGH,
-                    title=f"No MFA registered: {user.get('userPrincipalName', user['id'])}",
-                    detail="This account has no authentication methods beyond a password.",
-                    affected_object=user["id"],
-                    remediation="Require MFA registration for this user.",
-                ))
+        for record in records:
+            if record.get("isGuest") or record.get("isExternalUser"):
+                continue
+            findings.append(Finding(
+                check_id=self.id,
+                severity=Severity.HIGH,
+                title=f"No MFA registered: {record.get('userPrincipalName', record['id'])}",
+                detail="This account has no authentication methods beyond a password.",
+                affected_object=record["id"],
+                remediation="Require MFA registration for this user.",
+            ))
         return findings
 
 

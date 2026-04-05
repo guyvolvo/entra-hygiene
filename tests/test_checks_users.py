@@ -96,47 +96,35 @@ class TestStaleAccounts:
 
 # USER_002 - MFA Gaps
 
+REGISTRATION_URL = (
+    f"{BASE_URL}/reports/authenticationMethods/userRegistrationDetails"
+    "?$filter=isMfaRegistered eq false"
+)
+
+
 class TestMfaGaps:
     @pytest.mark.asyncio
     async def test_no_mfa_flagged(self, graph, httpx_mock):
         httpx_mock.add_response(
-            url=f"{BASE_URL}/users?$select=id,displayName,userPrincipalName,"
-                f"accountEnabled,userType&$filter=accountEnabled eq true&$count=true",
-            json={
-                "value": [{"id": "u1", "userPrincipalName": "nomfa@contoso.com", "accountEnabled": True}]
-            },
-        )
-        httpx_mock.add_response(
-            url=f"{BASE_URL}/users/u1/authentication/methods",
-            json={
-                "value": [{
-                    "@odata.type": "#microsoft.graph.passwordAuthenticationMethod",
-                    "id": "pwd1",
-                }]
-            },
+            url=REGISTRATION_URL,
+            json={"value": [{"id": "u1", "userPrincipalName": "nomfa@contoso.com", "isMfaRegistered": False}]},
         )
         findings = await MfaGapsCheck().run(graph)
         assert len(findings) == 1
         assert findings[0].severity == Severity.HIGH
 
     @pytest.mark.asyncio
-    async def test_mfa_registered_not_flagged(self, graph, httpx_mock):
+    async def test_guest_not_flagged(self, graph, httpx_mock):
         httpx_mock.add_response(
-            url=f"{BASE_URL}/users?$select=id,displayName,userPrincipalName,"
-                f"accountEnabled,userType&$filter=accountEnabled eq true&$count=true",
-            json={
-                "value": [{"id": "u2", "userPrincipalName": "hasmfa@contoso.com", "accountEnabled": True}]
-            },
+            url=REGISTRATION_URL,
+            json={"value": [{"id": "u2", "userPrincipalName": "guest@ext.com", "isMfaRegistered": False, "isGuest": True}]},
         )
-        httpx_mock.add_response(
-            url=f"{BASE_URL}/users/u2/authentication/methods",
-            json={
-                "value": [
-                    {"@odata.type": "#microsoft.graph.passwordAuthenticationMethod", "id": "pwd1"},
-                    {"@odata.type": "#microsoft.graph.microsoftAuthenticatorAuthenticationMethod", "id": "auth1"},
-                ]
-            },
-        )
+        findings = await MfaGapsCheck().run(graph)
+        assert len(findings) == 0
+
+    @pytest.mark.asyncio
+    async def test_all_mfa_registered_no_findings(self, graph, httpx_mock):
+        httpx_mock.add_response(url=REGISTRATION_URL, json={"value": []})
         findings = await MfaGapsCheck().run(graph)
         assert len(findings) == 0
 

@@ -88,6 +88,7 @@ The tool needs an App Registration in Entra ID with **Application permissions** 
 | `RoleManagement.Read.Directory` | Read directory role assignments |
 | `UserAuthenticationMethod.Read.All` | Read MFA and authentication methods per user |
 | `IdentityRiskyUser.Read.All` | Read risky user signals from Identity Protection |
+| `Reports.Read.All` | Read MFA registration status reports |
 | `Mail.Send` | Send HTML scan reports by email (optional) |
 
 > `Mail.Send` is only required if you use the `SENDER_EMAIL` / `REPORT_EMAIL` email feature. With application permission it can send as any mailbox in the tenant. Scope it to a dedicated alerts mailbox via an [Exchange application access policy](https://learn.microsoft.com/en-us/graph/auth-limit-mailbox-access) if your org requires it.
