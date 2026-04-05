@@ -37,6 +37,8 @@ token = result["access_token"]
 with open("report.html", encoding="utf-8") as f:
     html_body = f.read()
 
+html_attachment = base64.b64encode(html_body.encode()).decode("ascii")
+
 with open("report.json", "rb") as f:
     json_attachment = base64.b64encode(f.read()).decode("ascii")
 
@@ -45,12 +47,20 @@ payload = {
         "subject": "Entra Hygiene Scan Report",
         "body": {"contentType": "HTML", "content": html_body},
         "toRecipients": [{"emailAddress": {"address": REPORT_EMAIL}}],
-        "attachments": [{
-            "@odata.type": "#microsoft.graph.fileAttachment",
-            "name": "report.json",
-            "contentType": "application/json",
-            "contentBytes": json_attachment,
-        }],
+        "attachments": [
+            {
+                "@odata.type": "#microsoft.graph.fileAttachment",
+                "name": "report.html",
+                "contentType": "text/html",
+                "contentBytes": html_attachment,
+            },
+            {
+                "@odata.type": "#microsoft.graph.fileAttachment",
+                "name": "report.json",
+                "contentType": "application/json",
+                "contentBytes": json_attachment,
+            },
+        ],
     }
 }
 

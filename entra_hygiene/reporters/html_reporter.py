@@ -53,7 +53,7 @@ table { border-collapse: collapse; }
   <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;border-bottom:1px solid #27272a;padding-bottom:10px;margin-bottom:10px;">
     <tr>
       <td bgcolor="#09090b" style="background-color:#09090b;vertical-align:bottom;">
-        <div style="font-size:10px;color:#323232;text-transform:uppercase;letter-spacing:0.08em;font-family:monospace;margin-bottom:2px;">entra-hygiene</div>
+        <div style="font-size:10px;color:#52525b;text-transform:uppercase;letter-spacing:0.08em;font-family:monospace;margin-bottom:2px;">entra-hygiene</div>
         <div style="font-size:16px;font-weight:600;color:#ffffff;">Scan Report</div>
       </td>
       <td bgcolor="#09090b" style="background-color:#09090b;text-align:right;vertical-align:bottom;font-size:11px;color:#71717a;">
@@ -72,7 +72,7 @@ table { border-collapse: collapse; }
       {% for sev in severities %}
       <td bgcolor="#18181b" style="background-color:#18181b;border:1px solid #27272a;{% if not loop.last %}border-right:0;{% endif %}padding:8px 12px;text-align:center;">
         <div style="font-size:20px;font-weight:700;color:{{ sev_color[sev.value] }};font-variant-numeric:tabular-nums;">{{ counts[sev] }}</div>
-        <div style="font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:#323232;margin-top:2px;">{{ sev.value }}</div>
+        <div style="font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:#52525b;margin-top:2px;">{{ sev.value }}</div>
       </td>
       {% endfor %}
     </tr>
@@ -103,11 +103,11 @@ table { border-collapse: collapse; }
   {% else %}
   <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;border:1px solid #27272a;">
     <tr>
-      <th bgcolor="#18181b" style="background-color:#18181b;padding:6px 8px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:#323232;font-weight:500;border-bottom:1px solid #27272a;white-space:nowrap;">Severity</th>
-      <th bgcolor="#18181b" style="background-color:#18181b;padding:6px 8px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:#323232;font-weight:500;border-bottom:1px solid #27272a;white-space:nowrap;">Check</th>
-      <th bgcolor="#18181b" style="background-color:#18181b;padding:6px 8px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:#323232;font-weight:500;border-bottom:1px solid #27272a;">Title</th>
-      <th bgcolor="#18181b" style="background-color:#18181b;padding:6px 8px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:#323232;font-weight:500;border-bottom:1px solid #27272a;">Detail</th>
-      <th bgcolor="#18181b" style="background-color:#18181b;padding:6px 8px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:#323232;font-weight:500;border-bottom:1px solid #27272a;">Remediation</th>
+      <th bgcolor="#18181b" style="background-color:#18181b;padding:6px 8px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:#52525b;font-weight:500;border-bottom:1px solid #27272a;white-space:nowrap;">Severity</th>
+      <th bgcolor="#18181b" style="background-color:#18181b;padding:6px 8px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:#52525b;font-weight:500;border-bottom:1px solid #27272a;white-space:nowrap;">Check</th>
+      <th bgcolor="#18181b" style="background-color:#18181b;padding:6px 8px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:#52525b;font-weight:500;border-bottom:1px solid #27272a;">Title</th>
+      <th bgcolor="#18181b" style="background-color:#18181b;padding:6px 8px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:#52525b;font-weight:500;border-bottom:1px solid #27272a;">Detail</th>
+      <th bgcolor="#18181b" style="background-color:#18181b;padding:6px 8px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:#52525b;font-weight:500;border-bottom:1px solid #27272a;">Remediation</th>
     </tr>
     {% for f in findings %}
     <tr class="row">

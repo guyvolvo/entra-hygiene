@@ -111,18 +111,27 @@ def _send_email_report(token: str, result: ScanResult) -> None:
         return
 
     html = render_html(result)
+    html_attachment = base64.b64encode(html.encode()).decode("ascii")
     json_attachment = base64.b64encode(result.model_dump_json(indent=2).encode()).decode("ascii")
     payload = {
         "message": {
             "subject": "Entra Hygiene Scan Report",
             "body": {"contentType": "HTML", "content": html},
             "toRecipients": [{"emailAddress": {"address": recipient}}],
-            "attachments": [{
-                "@odata.type": "#microsoft.graph.fileAttachment",
-                "name": "report.json",
-                "contentType": "application/json",
-                "contentBytes": json_attachment,
-            }],
+            "attachments": [
+                {
+                    "@odata.type": "#microsoft.graph.fileAttachment",
+                    "name": "report.html",
+                    "contentType": "text/html",
+                    "contentBytes": html_attachment,
+                },
+                {
+                    "@odata.type": "#microsoft.graph.fileAttachment",
+                    "name": "report.json",
+                    "contentType": "application/json",
+                    "contentBytes": json_attachment,
+                },
+            ],
         }
     }
     response = httpx.post(
