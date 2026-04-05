@@ -40,22 +40,22 @@ table { border-collapse: collapse; }
 .row:hover td { background-color: #1c1c1f !important; }
 </style>
 </head>
-<body style="margin:0;padding:0;background-color:#09090b;color:#e4e4e7;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:13px;line-height:1.4;">
+<body bgcolor="#09090b" style="margin:0;padding:0;background-color:#09090b;color:#e4e4e7;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:13px;line-height:1.4;">
 
-<table width="100%" cellpadding="16" cellspacing="0" bgcolor="#09090b" style="background-color:#09090b;border-collapse:collapse;">
-<tr><td>
+<table width="100%" cellpadding="0" cellspacing="0" bgcolor="#09090b" style="background-color:#09090b;border-collapse:collapse;">
+<tr><td bgcolor="#09090b" style="background-color:#09090b;padding:16px;">
 
 <table width="100%" cellpadding="0" cellspacing="0" style="max-width:960px;margin:0 auto;border-collapse:collapse;">
-<tr><td>
+<tr><td bgcolor="#09090b" style="background-color:#09090b;">
 
   <!-- Header -->
   <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;border-bottom:1px solid #27272a;padding-bottom:10px;margin-bottom:10px;">
     <tr>
-      <td style="vertical-align:bottom;">
+      <td bgcolor="#09090b" style="background-color:#09090b;vertical-align:bottom;">
         <div style="font-size:10px;color:#52525b;text-transform:uppercase;letter-spacing:0.08em;font-family:monospace;margin-bottom:2px;">entra-hygiene</div>
         <div style="font-size:16px;font-weight:600;color:#ffffff;">Scan Report</div>
       </td>
-      <td style="text-align:right;vertical-align:bottom;font-size:11px;color:#71717a;">
+      <td bgcolor="#09090b" style="background-color:#09090b;text-align:right;vertical-align:bottom;font-size:11px;color:#71717a;">
         <span style="font-family:monospace;color:#d4d4d8;">{{ result.tenant_id }}</span><br>
         {{ result.started_at.strftime('%Y-%m-%d %H:%M UTC') }}
         &nbsp;&middot;&nbsp;{{ '%.1f'|format(result.duration_seconds) }}s
@@ -69,7 +69,7 @@ table { border-collapse: collapse; }
   <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;margin-bottom:10px;">
     <tr>
       {% for sev in severities %}
-      <td style="background-color:#18181b;border:1px solid #27272a;{% if not loop.last %}border-right:0;{% endif %}padding:8px 12px;text-align:center;">
+      <td bgcolor="#18181b" style="background-color:#18181b;border:1px solid #27272a;{% if not loop.last %}border-right:0;{% endif %}padding:8px 12px;text-align:center;">
         <div style="font-size:20px;font-weight:700;color:{{ sev_color[sev.value] }};font-variant-numeric:tabular-nums;">{{ counts[sev] }}</div>
         <div style="font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:#52525b;margin-top:2px;">{{ sev.value }}</div>
       </td>
@@ -81,12 +81,12 @@ table { border-collapse: collapse; }
   {% if result.errors %}
   <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;border:1px solid #7f1d1d;margin-bottom:10px;">
     <tr>
-      <td colspan="2" style="background-color:#1c0a0a;padding:4px 8px;font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:#f87171;border-bottom:1px solid #7f1d1d;">Check Errors</td>
+      <td colspan="2" bgcolor="#1c0a0a" style="background-color:#1c0a0a;padding:4px 8px;font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:#f87171;border-bottom:1px solid #7f1d1d;">Check Errors</td>
     </tr>
     {% for err in result.errors %}
     <tr>
-      <td style="padding:4px 8px;font-family:monospace;font-size:11px;color:#71717a;white-space:nowrap;border-top:1px solid #27272a;">{{ err.check_id }}</td>
-      <td style="padding:4px 8px;color:#fca5a5;font-size:12px;border-top:1px solid #27272a;">{{ err.error }}</td>
+      <td bgcolor="#09090b" style="background-color:#09090b;padding:4px 8px;font-family:monospace;font-size:11px;color:#71717a;white-space:nowrap;border-top:1px solid #27272a;">{{ err.check_id }}</td>
+      <td bgcolor="#09090b" style="background-color:#09090b;padding:4px 8px;color:#fca5a5;font-size:12px;border-top:1px solid #27272a;">{{ err.error }}</td>
     </tr>
     {% endfor %}
   </table>
@@ -96,27 +96,27 @@ table { border-collapse: collapse; }
   {% if not result.findings %}
   <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;border:1px solid #27272a;">
     <tr>
-      <td style="padding:24px;text-align:center;color:#4ade80;font-size:13px;">No findings - tenant looks clean.</td>
+      <td bgcolor="#09090b" style="background-color:#09090b;padding:24px;text-align:center;color:#4ade80;font-size:13px;">No findings - tenant looks clean.</td>
     </tr>
   </table>
   {% else %}
   <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;border:1px solid #27272a;">
-    <tr style="background-color:#18181b;">
-      <th style="padding:6px 8px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:#52525b;font-weight:500;border-bottom:1px solid #27272a;white-space:nowrap;">Severity</th>
-      <th style="padding:6px 8px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:#52525b;font-weight:500;border-bottom:1px solid #27272a;white-space:nowrap;">Check</th>
-      <th style="padding:6px 8px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:#52525b;font-weight:500;border-bottom:1px solid #27272a;">Title</th>
-      <th style="padding:6px 8px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:#52525b;font-weight:500;border-bottom:1px solid #27272a;">Detail</th>
-      <th style="padding:6px 8px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:#52525b;font-weight:500;border-bottom:1px solid #27272a;">Remediation</th>
+    <tr>
+      <th bgcolor="#18181b" style="background-color:#18181b;padding:6px 8px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:#52525b;font-weight:500;border-bottom:1px solid #27272a;white-space:nowrap;">Severity</th>
+      <th bgcolor="#18181b" style="background-color:#18181b;padding:6px 8px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:#52525b;font-weight:500;border-bottom:1px solid #27272a;white-space:nowrap;">Check</th>
+      <th bgcolor="#18181b" style="background-color:#18181b;padding:6px 8px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:#52525b;font-weight:500;border-bottom:1px solid #27272a;">Title</th>
+      <th bgcolor="#18181b" style="background-color:#18181b;padding:6px 8px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:#52525b;font-weight:500;border-bottom:1px solid #27272a;">Detail</th>
+      <th bgcolor="#18181b" style="background-color:#18181b;padding:6px 8px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:#52525b;font-weight:500;border-bottom:1px solid #27272a;">Remediation</th>
     </tr>
     {% for f in findings %}
     <tr class="row">
-      <td style="padding:5px 8px;white-space:nowrap;border-top:1px solid #27272a;">
+      <td bgcolor="#09090b" style="background-color:#09090b;padding:5px 8px;white-space:nowrap;border-top:1px solid #27272a;">
         <span style="display:inline-block;padding:1px 6px;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;background-color:{{ sev_bg[f.severity.value] }};color:{{ sev_color[f.severity.value] }};border:1px solid {{ sev_color[f.severity.value] }}33;">{{ f.severity.value }}</span>
       </td>
-      <td style="padding:5px 8px;font-family:monospace;font-size:11px;color:#71717a;white-space:nowrap;border-top:1px solid #27272a;">{{ f.check_id }}</td>
-      <td style="padding:5px 8px;color:#e4e4e7;font-size:12px;border-top:1px solid #27272a;">{{ f.title }}</td>
-      <td style="padding:5px 8px;color:#a1a1aa;font-size:12px;border-top:1px solid #27272a;">{{ f.detail }}</td>
-      <td style="padding:5px 8px;color:#a1a1aa;font-size:12px;border-top:1px solid #27272a;">{{ f.remediation }}</td>
+      <td bgcolor="#09090b" style="background-color:#09090b;padding:5px 8px;font-family:monospace;font-size:11px;color:#71717a;white-space:nowrap;border-top:1px solid #27272a;">{{ f.check_id }}</td>
+      <td bgcolor="#09090b" style="background-color:#09090b;padding:5px 8px;color:#e4e4e7;font-size:12px;border-top:1px solid #27272a;">{{ f.title }}</td>
+      <td bgcolor="#09090b" style="background-color:#09090b;padding:5px 8px;color:#a1a1aa;font-size:12px;border-top:1px solid #27272a;">{{ f.detail }}</td>
+      <td bgcolor="#09090b" style="background-color:#09090b;padding:5px 8px;color:#a1a1aa;font-size:12px;border-top:1px solid #27272a;">{{ f.remediation }}</td>
     </tr>
     {% endfor %}
   </table>
