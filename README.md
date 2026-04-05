@@ -156,17 +156,13 @@ entra_hygiene_scan_success
 
 A scheduled workflow runs every Sunday at 09:00 UTC. It uploads HTML and JSON reports as workflow artifacts (retained 30 days) and optionally emails the HTML report.
 
-The workflow file is already in the repo at `.github/workflows/weekly-scan.yml`. GitHub picks it up automatically - no installation required.
+**How it works - no .env file involved:**
 
-**Enabling the workflow:**
+The workflow runs on GitHub's servers, not your machine. Your `.env` file is gitignored and never leaves your local environment. Instead, credentials are stored directly in GitHub as encrypted repository secrets and injected as environment variables at runtime. The workflow file (`.github/workflows/weekly-scan.yml`) is already in the repo - GitHub picks it up automatically when pushed.
 
-1. Go to your repo on GitHub → **Actions** tab
-2. If prompted, click **Enable GitHub Actions**
-3. The workflow will run on schedule from that point forward
+**One-time setup:**
 
-**Adding secrets:**
-
-Go to **Settings → Secrets and variables → Actions → New repository secret** and add each of the following:
+1. Go to your repo on GitHub → **Settings → Secrets and variables → Actions → New repository secret** and add each of the following:
 
 | Secret | Required | Value |
 |---|---|---|
@@ -176,7 +172,10 @@ Go to **Settings → Secrets and variables → Actions → New repository secret
 | `SENDER_EMAIL` | No | Mailbox to send the report from |
 | `REPORT_EMAIL` | No | Recipient address for the emailed report |
 
-Secrets are encrypted and never visible after saving. They are injected as environment variables at runtime only.
+Secrets are encrypted and never visible after saving. They are never written to disk or exposed in logs.
+
+2. Go to **Actions** tab → if prompted, click **Enable GitHub Actions**
+3. Trigger a manual run to verify auth works before the scheduled run fires (see below)
 
 If `SENDER_EMAIL` or `REPORT_EMAIL` are absent the email step is skipped - the scan and artifact upload still run.
 
