@@ -1,9 +1,12 @@
 from __future__ import annotations
 
 import asyncio
+import base64
+import os
 from datetime import datetime
 from typing import Optional
 
+import httpx
 import typer
 from rich.console import Console
 from rich.table import Table
@@ -99,6 +102,39 @@ async def _run_scan(graph: GraphClient, check_list: list) -> ScanResult:
         findings=all_findings,
         errors=all_errors,
     )
+
+
+def _send_email_report(token: str, result: ScanResult) -> None:
+    sender = os.environ.get("SENDER_EMAIL", "")
+    recipient = os.environ.get("REPORT_EMAIL", "")
+    if not sender or not recipient:
+        return
+
+    html = render_html(result)
+    json_attachment = base64.b64encode(result.model_dump_json(indent=2).encode()).decode("ascii")
+    payload = {
+        "message": {
+            "subject": "Entra Hygiene Scan Report",
+            "body": {"contentType": "HTML", "content": html},
+            "toRecipients": [{"emailAddress": {"address": recipient}}],
+            "attachments": [{
+                "@odata.type": "#microsoft.graph.fileAttachment",
+                "name": "report.json",
+                "contentType": "application/json",
+                "contentBytes": json_attachment,
+            }],
+        }
+    }
+    response = httpx.post(
+        f"https://graph.microsoft.com/v1.0/users/{sender}/sendMail",
+        json=payload,
+        headers={"Authorization": f"Bearer {token}"},
+        timeout=30,
+    )
+    if response.status_code == 202:
+        console.print(f"Report emailed to {recipient}.")
+    else:
+        console.print(f"[yellow]sendMail failed: {response.status_code} {response.text}[/yellow]")
 
 
 def _print_console_report(result: ScanResult) -> None:
@@ -207,6 +243,8 @@ def scan(
     else:
         _print_console_report(result)
 
+    _send_email_report(token, result)
+
     if not result.success:
         raise typer.Exit(code=2)
 
@@ -237,6 +275,7 @@ def serve(
                 result = await _run_scan(graph, ALL_CHECKS)
                 await graph.close()
                 update_metrics(result)
+                _send_email_report(token, result)
                 console.print(
                     f"[dim]{datetime.now():%Y-%m-%d %H:%M:%S}[/dim] "
                     f"Scan complete. {len(result.findings)} findings, "
