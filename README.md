@@ -154,11 +154,11 @@ entra_hygiene_scan_success
 
 ## GitHub Actions
 
-A scheduled workflow runs every Sunday at 09:00 UTC. It uploads HTML and JSON reports as workflow artifacts (retained 30 days) and optionally emails the HTML report.
+Runs every Sunday at 09:00 UTC. Uploads HTML and JSON reports as artifacts (retained 30 days) and optionally emails the HTML report.
 
-**One-time setup:**
+**Setup:**
 
-1. Go to your repo on GitHub → **Settings → Secrets and variables → Actions → New repository secret** and add each of the following:
+1. **Settings → Secrets and variables → Actions → New repository secret:**
 
 | Secret | Required | Value |
 |---|---|---|
@@ -166,22 +166,18 @@ A scheduled workflow runs every Sunday at 09:00 UTC. It uploads HTML and JSON re
 | `CLIENT_ID` | Yes | App registration client ID |
 | `CLIENT_SECRET` | Yes | App registration client secret |
 | `SENDER_EMAIL` | No | Mailbox to send the report from |
-| `REPORT_EMAIL` | No | Recipient address for the emailed report |
+| `REPORT_EMAIL` | No | Recipient address |
 
-Secrets are encrypted and never visible after saving. They are never written to disk or exposed in logs.
-
-2. Go to **Actions** tab → if prompted, click **Enable GitHub Actions**
-3. Trigger a manual run to verify auth works before the scheduled run fires (see below)
-
-If `SENDER_EMAIL` or `REPORT_EMAIL` are absent the email step is skipped - the scan and artifact upload still run.
+2. **Actions** tab → enable if prompted
+3. Trigger a manual run to verify before the next scheduled run fires
 
 **Manual runs:**
 
-Actions → **Entra Hygiene Scan** → **Run workflow**. You can optionally pass a comma-separated list of check IDs to run only a subset, and toggle whether to send the email.
+Actions → **Entra Hygiene Scan** → **Run workflow**. Optionally pass a comma-separated list of check IDs and toggle email sending.
 
-**Finding the reports:**
+**Reports:**
 
-After each run: Actions → click the run → scroll to **Artifacts** → download `entra-hygiene-<run_id>` (contains `report.html` and `report.json`, retained 30 days).
+Actions → click the run → **Artifacts** → download `entra-hygiene-<run_id>` (`report.html` + `report.json`).
 
 ---
 
