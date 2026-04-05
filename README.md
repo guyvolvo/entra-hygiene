@@ -156,10 +156,6 @@ entra_hygiene_scan_success
 
 A scheduled workflow runs every Sunday at 09:00 UTC. It uploads HTML and JSON reports as workflow artifacts (retained 30 days) and optionally emails the HTML report.
 
-**How it works - no .env file involved:**
-
-The workflow runs on GitHub's servers, not your machine. Your `.env` file is gitignored and never leaves your local environment. Instead, credentials are stored directly in GitHub as encrypted repository secrets and injected as environment variables at runtime. The workflow file (`.github/workflows/weekly-scan.yml`) is already in the repo - GitHub picks it up automatically when pushed.
-
 **One-time setup:**
 
 1. Go to your repo on GitHub → **Settings → Secrets and variables → Actions → New repository secret** and add each of the following:
