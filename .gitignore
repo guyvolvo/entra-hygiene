@@ -50,6 +50,7 @@ docker/secrets/
 # Claude / AI agent config
 .claude/
 memory/
+CLAUDE.md
 .cursorrules
 .aider*
 .continue/
