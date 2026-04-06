@@ -105,7 +105,7 @@ The tool needs an App Registration in Entra ID with **Application permissions** 
 4. Grant admin consent
 5. Certificates & secrets → New client secret → copy the value into `.env`
 
-For production use, prefer a certificate over a client secret.
+For GitHub Actions, federated credentials are recommended over a client secret — no secret to rotate or store. See the GitHub Actions section for setup instructions.
 
 ---
 
@@ -174,12 +174,29 @@ Runs every Sunday at 09:00 UTC. Uploads HTML and JSON reports as artifacts (reta
 |---|---|---|
 | `TENANT_ID` | Yes | Your Entra tenant ID |
 | `CLIENT_ID` | Yes | App registration client ID |
-| `CLIENT_SECRET` | Yes | App registration client secret |
+| `CLIENT_SECRET` | No | App registration client secret (only needed without OIDC) |
 | `SENDER_EMAIL` | No | Mailbox to send the report from |
 | `REPORT_EMAIL` | No | Recipient address |
 
-2. **Actions** tab → enable if prompted
-3. Trigger a manual run to verify before the next scheduled run fires
+2. **Configure federated credentials (recommended — no secret to store or rotate):**
+
+   In the Azure Portal, open your app registration → **Certificates & secrets → Federated credentials → Add credential**:
+
+   | Field | Value |
+   |---|---|
+   | Federated credential scenario | GitHub Actions deploying Azure resources |
+   | Organization | your GitHub username or org |
+   | Repository | `entra-hygiene` |
+   | Entity type | Branch |
+   | Branch | `main` |
+   | Name | anything (e.g. `github-actions`) |
+
+   Save, then add only `TENANT_ID` and `CLIENT_ID` as GitHub secrets — no `CLIENT_SECRET` required.
+
+   If you skip this step, set `CLIENT_SECRET` instead and the workflow falls back to client secret auth automatically.
+
+3. **Actions** tab → enable if prompted
+4. Trigger a manual run to verify before the next scheduled run fires
 
 **Manual runs:**
 
