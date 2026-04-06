@@ -180,20 +180,20 @@ Runs every Sunday at 09:00 UTC. Uploads HTML and JSON reports as artifacts (reta
 
 2. **Configure federated credentials (recommended - no secret to store or rotate):**
 
-   In the Azure Portal, open your app registration > **Certificates & secrets > Federated credentials > Add credential**:
+In the Azure Portal, open your app registration > **Certificates & secrets > Federated credentials > Add credential**:
 
-   | Field | Value |
-   |---|---|
-   | Federated credential scenario | GitHub Actions deploying Azure resources |
-   | Organization | your GitHub username or org |
-   | Repository | `entra-hygiene` |
-   | Entity type | Branch |
-   | Branch | `main` |
-   | Name | anything (e.g. `github-actions`) |
+| Field | Value |
+|---|---|
+| Federated credential scenario | GitHub Actions deploying Azure resources |
+| Organization | your GitHub username or org |
+| Repository | `entra-hygiene` |
+| Entity type | Branch |
+| Branch | `main` |
+| Name | anything (e.g. `github-actions`) |
 
-   Save, then add only `TENANT_ID` and `CLIENT_ID` as GitHub secrets - no `CLIENT_SECRET` required.
+Save, then add only `TENANT_ID` and `CLIENT_ID` as GitHub secrets - no `CLIENT_SECRET` required.
 
-   If you skip this step, set `CLIENT_SECRET` instead and the workflow falls back to client secret auth automatically.
+If you skip this step, set `CLIENT_SECRET` instead and the workflow falls back to client secret auth automatically.
 
 3. **Actions** tab > enable if prompted
 4. Trigger a manual run to verify before the next scheduled run fires
