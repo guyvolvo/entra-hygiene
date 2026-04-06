@@ -71,7 +71,7 @@ class MfaGapsCheck(BaseCheck):
         )
         findings: list[Finding] = []
         for record in records:
-            if record.get("isGuest") or record.get("isExternalUser"):
+            if record.get("isGuest"):
                 continue
             findings.append(Finding(
                 check_id=self.id,
@@ -117,6 +117,46 @@ class PrivilegedGuestCheck(BaseCheck):
             return data.get("displayName", role_def_id)
         except Exception:
             return role_def_id
+
+
+class RiskyUsersCheck(BaseCheck):
+    id = "USER_005"
+    title = "Risky Users"
+    description = "Users flagged by Entra Identity Protection as at-risk or confirmed compromised"
+
+    _SEVERITY_MAP = {
+        "high": Severity.CRITICAL,
+        "medium": Severity.HIGH,
+        "low": Severity.MEDIUM,
+    }
+
+    async def run(self, graph: GraphClient) -> list[Finding]:
+        users = await graph.get_all(
+            "/identityProtection/riskyUsers"
+            "?$select=id,userPrincipalName,displayName,riskLevel,riskState,riskLastUpdatedDateTime"
+            "&$filter=riskState eq 'atRisk' or riskState eq 'confirmedCompromised'"
+        )
+        findings: list[Finding] = []
+        for user in users:
+            state = user.get("riskState", "")
+            level = user.get("riskLevel", "")
+            upn = user.get("userPrincipalName") or user["id"]
+            if state == "confirmedCompromised":
+                severity = Severity.CRITICAL
+            else:
+                severity = self._SEVERITY_MAP.get(level, Severity.HIGH)
+            findings.append(Finding(
+                check_id=self.id,
+                severity=severity,
+                title=f"Risky user: {upn}",
+                detail=f"Risk state: {state}, risk level: {level}.",
+                affected_object=user["id"],
+                remediation=(
+                    "Investigate sign-in activity. Reset credentials and require MFA re-registration "
+                    "if compromise is confirmed. Use Identity Protection to dismiss or confirm."
+                ),
+            ))
+        return findings
 
 
 class GlobalAdminCountCheck(BaseCheck):

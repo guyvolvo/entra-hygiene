@@ -1,6 +1,6 @@
 # entra-hygiene
 
-A command-line tool that audits your Entra ID (Azure AD) tenant and tells you what's wrong before someone else finds out.
+A command-line tool that audits your Entra ID (Azure AD) tenant and reports security and hygiene issues across users, apps, policies, roles, and groups.
 
 It connects to Microsoft Graph API, runs a suite of hygiene checks across users, apps, Conditional Access policies, groups, and roles, then produces a severity-graded report - in your terminal, as JSON, as a self-contained HTML file, or as live Prometheus metrics for your existing stack.
 
@@ -16,6 +16,7 @@ Built for IT admins and security teams at SMBs who need a scriptable, schedulabl
 | `USER_002` | HIGH | Enabled accounts with no MFA method registered |
 | `USER_003` | CRITICAL / HIGH | Guest accounts holding directory roles |
 | `USER_004` | HIGH / CRITICAL | Global Admin count out of range, or stale Global Admin accounts |
+| `USER_005` | MEDIUM / HIGH / CRITICAL | Users flagged by Identity Protection as at-risk or confirmed compromised |
 | `APPS_001` | CRITICAL / HIGH | App secrets and certificates that are expired or expiring within 30 days |
 | `APPS_002` | MEDIUM | App registrations with no assigned owners |
 | `POLICY_001` | HIGH | No enabled CA policy enforcing MFA for all users across all apps |

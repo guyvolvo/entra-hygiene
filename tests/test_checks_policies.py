@@ -41,14 +41,12 @@ def _policy(
 # POLICY_001 - MFA for All Users
 
 class TestMfaForAll:
-    @pytest.mark.asyncio
     async def test_no_mfa_policy_flagged(self, graph, httpx_mock):
         httpx_mock.add_response(url=CA_URL, json={"value": []})
         findings = await MfaForAllCheck().run(graph)
         assert len(findings) == 1
         assert findings[0].severity == Severity.HIGH
 
-    @pytest.mark.asyncio
     async def test_broad_mfa_policy_not_flagged(self, graph, httpx_mock):
         httpx_mock.add_response(url=CA_URL, json={"value": [
             _policy(include_users=["All"], include_apps=["All"], grant_controls=["mfa"]),
@@ -56,7 +54,6 @@ class TestMfaForAll:
         findings = await MfaForAllCheck().run(graph)
         assert len(findings) == 0
 
-    @pytest.mark.asyncio
     async def test_mfa_for_specific_users_only_flagged(self, graph, httpx_mock):
         httpx_mock.add_response(url=CA_URL, json={"value": [
             _policy(include_users=["group-id-1"], include_apps=["All"], grant_controls=["mfa"]),
@@ -64,7 +61,6 @@ class TestMfaForAll:
         findings = await MfaForAllCheck().run(graph)
         assert len(findings) == 1
 
-    @pytest.mark.asyncio
     async def test_disabled_mfa_policy_flagged(self, graph, httpx_mock):
         httpx_mock.add_response(url=CA_URL, json={"value": [
             _policy(
@@ -75,7 +71,6 @@ class TestMfaForAll:
         findings = await MfaForAllCheck().run(graph)
         assert len(findings) == 1
 
-    @pytest.mark.asyncio
     async def test_report_only_mfa_policy_flagged(self, graph, httpx_mock):
         httpx_mock.add_response(url=CA_URL, json={"value": [
             _policy(
@@ -90,17 +85,16 @@ class TestMfaForAll:
 # POLICY_002 - Block Legacy Authentication
 
 class TestBlockLegacyAuth:
-    @pytest.mark.asyncio
     async def test_no_block_policy_flagged(self, graph, httpx_mock):
         httpx_mock.add_response(url=CA_URL, json={"value": []})
         findings = await BlockLegacyAuthCheck().run(graph)
         assert len(findings) == 1
         assert findings[0].severity == Severity.HIGH
 
-    @pytest.mark.asyncio
     async def test_full_legacy_block_not_flagged(self, graph, httpx_mock):
         httpx_mock.add_response(url=CA_URL, json={"value": [
             _policy(
+                include_users=["All"],
                 client_app_types=["exchangeActiveSync", "other"],
                 grant_controls=["block"],
             ),
@@ -108,16 +102,14 @@ class TestBlockLegacyAuth:
         findings = await BlockLegacyAuthCheck().run(graph)
         assert len(findings) == 0
 
-    @pytest.mark.asyncio
     async def test_split_policies_covering_all_not_flagged(self, graph, httpx_mock):
         httpx_mock.add_response(url=CA_URL, json={"value": [
-            _policy(pid="p1", client_app_types=["exchangeActiveSync"], grant_controls=["block"]),
-            _policy(pid="p2", client_app_types=["other"], grant_controls=["block"]),
+            _policy(pid="p1", include_users=["All"], client_app_types=["exchangeActiveSync"], grant_controls=["block"]),
+            _policy(pid="p2", include_users=["All"], client_app_types=["other"], grant_controls=["block"]),
         ]})
         findings = await BlockLegacyAuthCheck().run(graph)
         assert len(findings) == 0
 
-    @pytest.mark.asyncio
     async def test_only_eas_blocked_flagged(self, graph, httpx_mock):
         httpx_mock.add_response(url=CA_URL, json={"value": [
             _policy(client_app_types=["exchangeActiveSync"], grant_controls=["block"]),
@@ -126,7 +118,6 @@ class TestBlockLegacyAuth:
         assert len(findings) == 1
         assert "other legacy clients" in findings[0].detail
 
-    @pytest.mark.asyncio
     async def test_disabled_block_policy_flagged(self, graph, httpx_mock):
         httpx_mock.add_response(url=CA_URL, json={"value": [
             _policy(
@@ -142,7 +133,6 @@ class TestBlockLegacyAuth:
 # POLICY_003 - Report-Only Policies
 
 class TestReportOnlyPolicies:
-    @pytest.mark.asyncio
     async def test_report_only_policy_flagged(self, graph, httpx_mock):
         httpx_mock.add_response(url=CA_URL, json={"value": [
             _policy(pid="p1", name="Pilot MFA Policy", state="enabledForReportingButNotEnforced"),
@@ -152,7 +142,6 @@ class TestReportOnlyPolicies:
         assert findings[0].severity == Severity.LOW
         assert "Pilot MFA Policy" in findings[0].title
 
-    @pytest.mark.asyncio
     async def test_enabled_policy_not_flagged(self, graph, httpx_mock):
         httpx_mock.add_response(url=CA_URL, json={"value": [
             _policy(pid="p1", state="enabled"),
@@ -160,7 +149,6 @@ class TestReportOnlyPolicies:
         findings = await ReportOnlyPoliciesCheck().run(graph)
         assert len(findings) == 0
 
-    @pytest.mark.asyncio
     async def test_multiple_report_only_each_flagged(self, graph, httpx_mock):
         httpx_mock.add_response(url=CA_URL, json={"value": [
             _policy(pid="p1", name="Policy A", state="enabledForReportingButNotEnforced"),

@@ -50,10 +50,9 @@ def _sp_assignment(
     }
 
 
-# ROLES_001 -- Permanent Privileged Assignments
+# ROLES_001 - Permanent Privileged Assignments
 
 class TestPermanentPrivilegedAssignments:
-    @pytest.mark.asyncio
     async def test_ga_user_flagged_high(self, graph, httpx_mock):
         httpx_mock.add_response(url=ROLE_ASSIGNMENTS_URL, json={"value": [
             _user_assignment("a1", GA_ROLE_ID, "admin@contoso.com"),
@@ -63,7 +62,6 @@ class TestPermanentPrivilegedAssignments:
         assert findings[0].severity == Severity.HIGH
         assert "Global Administrator" in findings[0].detail
 
-    @pytest.mark.asyncio
     async def test_pra_user_flagged_high(self, graph, httpx_mock):
         httpx_mock.add_response(url=ROLE_ASSIGNMENTS_URL, json={"value": [
             _user_assignment("a2", PRA_ROLE_ID, "priv@contoso.com"),
@@ -72,7 +70,6 @@ class TestPermanentPrivilegedAssignments:
         assert len(findings) == 1
         assert findings[0].severity == Severity.HIGH
 
-    @pytest.mark.asyncio
     async def test_sec_admin_flagged_medium(self, graph, httpx_mock):
         httpx_mock.add_response(url=ROLE_ASSIGNMENTS_URL, json={"value": [
             _user_assignment("a3", SEC_ADMIN_ROLE_ID, "sec@contoso.com"),
@@ -81,7 +78,6 @@ class TestPermanentPrivilegedAssignments:
         assert len(findings) == 1
         assert findings[0].severity == Severity.MEDIUM
 
-    @pytest.mark.asyncio
     async def test_non_privileged_role_not_flagged(self, graph, httpx_mock):
         httpx_mock.add_response(url=ROLE_ASSIGNMENTS_URL, json={"value": [
             _user_assignment("a4", NON_PRIV_ROLE_ID, "user@contoso.com"),
@@ -89,7 +85,6 @@ class TestPermanentPrivilegedAssignments:
         findings = await PermanentPrivilegedAssignmentsCheck().run(graph)
         assert len(findings) == 0
 
-    @pytest.mark.asyncio
     async def test_service_principal_not_flagged(self, graph, httpx_mock):
         httpx_mock.add_response(url=ROLE_ASSIGNMENTS_URL, json={"value": [
             _sp_assignment("a5", GA_ROLE_ID, "My App"),
@@ -97,17 +92,15 @@ class TestPermanentPrivilegedAssignments:
         findings = await PermanentPrivilegedAssignmentsCheck().run(graph)
         assert len(findings) == 0
 
-    @pytest.mark.asyncio
     async def test_no_assignments_no_findings(self, graph, httpx_mock):
         httpx_mock.add_response(url=ROLE_ASSIGNMENTS_URL, json={"value": []})
         findings = await PermanentPrivilegedAssignmentsCheck().run(graph)
         assert len(findings) == 0
 
 
-# ROLES_002 -- Service Principals with Privileged Roles
+# ROLES_002 - Service Principals with Privileged Roles
 
 class TestPrivilegedServicePrincipals:
-    @pytest.mark.asyncio
     async def test_sp_with_privileged_role_flagged(self, graph, httpx_mock):
         httpx_mock.add_response(url=ROLE_ASSIGNMENTS_URL, json={"value": [
             _sp_assignment("a6", GA_ROLE_ID, "Automation App"),
@@ -117,7 +110,6 @@ class TestPrivilegedServicePrincipals:
         assert findings[0].severity == Severity.HIGH
         assert "Automation App" in findings[0].title
 
-    @pytest.mark.asyncio
     async def test_sp_with_non_privileged_role_not_flagged(self, graph, httpx_mock):
         httpx_mock.add_response(url=ROLE_ASSIGNMENTS_URL, json={"value": [
             _sp_assignment("a7", NON_PRIV_ROLE_ID, "Safe App"),
@@ -125,7 +117,6 @@ class TestPrivilegedServicePrincipals:
         findings = await PrivilegedServicePrincipalsCheck().run(graph)
         assert len(findings) == 0
 
-    @pytest.mark.asyncio
     async def test_user_not_flagged_by_this_check(self, graph, httpx_mock):
         httpx_mock.add_response(url=ROLE_ASSIGNMENTS_URL, json={"value": [
             _user_assignment("a8", GA_ROLE_ID, "admin@contoso.com"),
@@ -133,7 +124,6 @@ class TestPrivilegedServicePrincipals:
         findings = await PrivilegedServicePrincipalsCheck().run(graph)
         assert len(findings) == 0
 
-    @pytest.mark.asyncio
     async def test_role_name_in_detail(self, graph, httpx_mock):
         httpx_mock.add_response(url=ROLE_ASSIGNMENTS_URL, json={"value": [
             _sp_assignment("a9", SEC_ADMIN_ROLE_ID, "Security Bot"),

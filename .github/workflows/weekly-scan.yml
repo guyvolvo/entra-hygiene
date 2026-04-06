@@ -36,18 +36,18 @@ jobs:
           CHECKS_INPUT: ${{ github.event.inputs.checks }}
         run: |
           if [ -n "$CHECKS_INPUT" ]; then
-            CHECKS_FLAG="--checks $CHECKS_INPUT"
+            entra-hygiene scan --output json --checks "$CHECKS_INPUT" > report.json
           else
-            CHECKS_FLAG=""
+            entra-hygiene scan --output json > report.json
           fi
-          entra-hygiene scan --output html $CHECKS_FLAG > report.html
-          html_code=$?
-          entra-hygiene scan --output json $CHECKS_FLAG > report.json
-          json_code=$?
-          # Exit 2 means findings exist, not a failure.
-          # Exit 1 means auth error or bad config, fail the job.
-          [ $html_code -eq 0 ] || [ $html_code -eq 2 ]
-          [ $json_code -eq 0 ] || [ $json_code -eq 2 ]
+          scan_code=$?
+          python3 -c "
+          from entra_hygiene.models import ScanResult
+          from entra_hygiene.reporters.html_reporter import render_html
+          result = ScanResult.model_validate_json(open('report.json').read())
+          print(render_html(result))
+          " > report.html
+          [ $scan_code -eq 0 ] || [ $scan_code -eq 2 ]
 
       - name: Upload reports
         uses: actions/upload-artifact@v4

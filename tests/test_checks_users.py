@@ -2,12 +2,11 @@ from __future__ import annotations
 
 from datetime import datetime, timedelta
 
-import pytest
-
 from entra_hygiene.checks.users import (
     GlobalAdminCountCheck,
     MfaGapsCheck,
     PrivilegedGuestCheck,
+    RiskyUsersCheck,
     StaleAccountsCheck,
 )
 from entra_hygiene.graph import BASE_URL
@@ -22,7 +21,6 @@ def _iso(days_ago: int) -> str:
 # USER_001 - Stale Accounts
 
 class TestStaleAccounts:
-    @pytest.mark.asyncio
     async def test_stale_account_flagged(self, graph, httpx_mock):
         httpx_mock.add_response(
             url=f"{BASE_URL}/users?$select=id,displayName,userPrincipalName,"
@@ -41,7 +39,6 @@ class TestStaleAccounts:
         assert findings[0].severity == Severity.MEDIUM
         assert "120 days" in findings[0].detail
 
-    @pytest.mark.asyncio
     async def test_active_account_not_flagged(self, graph, httpx_mock):
         httpx_mock.add_response(
             url=f"{BASE_URL}/users?$select=id,displayName,userPrincipalName,"
@@ -58,7 +55,6 @@ class TestStaleAccounts:
         findings = await StaleAccountsCheck().run(graph)
         assert len(findings) == 0
 
-    @pytest.mark.asyncio
     async def test_no_signin_activity_flagged(self, graph, httpx_mock):
         httpx_mock.add_response(
             url=f"{BASE_URL}/users?$select=id,displayName,userPrincipalName,"
@@ -76,7 +72,6 @@ class TestStaleAccounts:
         assert len(findings) == 1
         assert "No sign-in recorded" in findings[0].title
 
-    @pytest.mark.asyncio
     async def test_disabled_account_skipped(self, graph, httpx_mock):
         httpx_mock.add_response(
             url=f"{BASE_URL}/users?$select=id,displayName,userPrincipalName,"
@@ -103,7 +98,6 @@ REGISTRATION_URL = (
 
 
 class TestMfaGaps:
-    @pytest.mark.asyncio
     async def test_no_mfa_flagged(self, graph, httpx_mock):
         httpx_mock.add_response(
             url=REGISTRATION_URL,
@@ -113,7 +107,6 @@ class TestMfaGaps:
         assert len(findings) == 1
         assert findings[0].severity == Severity.HIGH
 
-    @pytest.mark.asyncio
     async def test_guest_not_flagged(self, graph, httpx_mock):
         httpx_mock.add_response(
             url=REGISTRATION_URL,
@@ -122,7 +115,6 @@ class TestMfaGaps:
         findings = await MfaGapsCheck().run(graph)
         assert len(findings) == 0
 
-    @pytest.mark.asyncio
     async def test_all_mfa_registered_no_findings(self, graph, httpx_mock):
         httpx_mock.add_response(url=REGISTRATION_URL, json={"value": []})
         findings = await MfaGapsCheck().run(graph)
@@ -136,7 +128,6 @@ OTHER_ROLE_ID = "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"
 
 
 class TestPrivilegedGuest:
-    @pytest.mark.asyncio
     async def test_guest_global_admin_critical(self, graph, httpx_mock):
         httpx_mock.add_response(
             url=f"{BASE_URL}/roleManagement/directory/roleAssignments?$expand=principal",
@@ -159,7 +150,6 @@ class TestPrivilegedGuest:
         assert len(findings) == 1
         assert findings[0].severity == Severity.CRITICAL
 
-    @pytest.mark.asyncio
     async def test_guest_other_role_high(self, graph, httpx_mock):
         httpx_mock.add_response(
             url=f"{BASE_URL}/roleManagement/directory/roleAssignments?$expand=principal",
@@ -182,7 +172,6 @@ class TestPrivilegedGuest:
         assert len(findings) == 1
         assert findings[0].severity == Severity.HIGH
 
-    @pytest.mark.asyncio
     async def test_member_with_role_not_flagged(self, graph, httpx_mock):
         httpx_mock.add_response(
             url=f"{BASE_URL}/roleManagement/directory/roleAssignments?$expand=principal",
@@ -210,7 +199,6 @@ class TestGlobalAdminCount:
             f"?$select=id,displayName,userPrincipalName,signInActivity"
         )
 
-    @pytest.mark.asyncio
     async def test_excessive_admins_flagged(self, graph, httpx_mock):
         members = [
             {"id": f"a{i}", "userPrincipalName": f"admin{i}@contoso.com",
@@ -222,7 +210,6 @@ class TestGlobalAdminCount:
         titles = [f.title for f in findings]
         assert any("Excessive" in t for t in titles)
 
-    @pytest.mark.asyncio
     async def test_single_admin_flagged(self, graph, httpx_mock):
         httpx_mock.add_response(
             url=self._members_url(),
@@ -238,7 +225,6 @@ class TestGlobalAdminCount:
         titles = [f.title for f in findings]
         assert any("Insufficient" in t for t in titles)
 
-    @pytest.mark.asyncio
     async def test_stale_admin_critical(self, graph, httpx_mock):
         httpx_mock.add_response(
             url=self._members_url(),
@@ -256,7 +242,6 @@ class TestGlobalAdminCount:
         assert len(stale) == 1
         assert "stale@contoso.com" in stale[0].title
 
-    @pytest.mark.asyncio
     async def test_healthy_admin_count_no_findings(self, graph, httpx_mock):
         members = [
             {"id": f"a{i}", "userPrincipalName": f"admin{i}@contoso.com",
@@ -265,4 +250,76 @@ class TestGlobalAdminCount:
         ]
         httpx_mock.add_response(url=self._members_url(), json={"value": members})
         findings = await GlobalAdminCountCheck().run(graph)
+        assert len(findings) == 0
+
+
+# USER_005 - Risky Users
+
+RISKY_USERS_URL = (
+    f"{BASE_URL}/identityProtection/riskyUsers"
+    "?$select=id,userPrincipalName,displayName,riskLevel,riskState,riskLastUpdatedDateTime"
+    "&$filter=riskState eq 'atRisk' or riskState eq 'confirmedCompromised'"
+)
+
+
+class TestRiskyUsers:
+    async def test_confirmed_compromised_is_critical(self, graph, httpx_mock):
+        httpx_mock.add_response(
+            url=RISKY_USERS_URL,
+            json={"value": [{
+                "id": "u1",
+                "userPrincipalName": "victim@contoso.com",
+                "riskLevel": "high",
+                "riskState": "confirmedCompromised",
+            }]},
+        )
+        findings = await RiskyUsersCheck().run(graph)
+        assert len(findings) == 1
+        assert findings[0].severity == Severity.CRITICAL
+
+    async def test_at_risk_high_is_critical(self, graph, httpx_mock):
+        httpx_mock.add_response(
+            url=RISKY_USERS_URL,
+            json={"value": [{
+                "id": "u2",
+                "userPrincipalName": "highrisk@contoso.com",
+                "riskLevel": "high",
+                "riskState": "atRisk",
+            }]},
+        )
+        findings = await RiskyUsersCheck().run(graph)
+        assert len(findings) == 1
+        assert findings[0].severity == Severity.CRITICAL
+
+    async def test_at_risk_medium_is_high(self, graph, httpx_mock):
+        httpx_mock.add_response(
+            url=RISKY_USERS_URL,
+            json={"value": [{
+                "id": "u3",
+                "userPrincipalName": "medrisk@contoso.com",
+                "riskLevel": "medium",
+                "riskState": "atRisk",
+            }]},
+        )
+        findings = await RiskyUsersCheck().run(graph)
+        assert len(findings) == 1
+        assert findings[0].severity == Severity.HIGH
+
+    async def test_at_risk_low_is_medium(self, graph, httpx_mock):
+        httpx_mock.add_response(
+            url=RISKY_USERS_URL,
+            json={"value": [{
+                "id": "u4",
+                "userPrincipalName": "lowrisk@contoso.com",
+                "riskLevel": "low",
+                "riskState": "atRisk",
+            }]},
+        )
+        findings = await RiskyUsersCheck().run(graph)
+        assert len(findings) == 1
+        assert findings[0].severity == Severity.MEDIUM
+
+    async def test_no_risky_users_no_findings(self, graph, httpx_mock):
+        httpx_mock.add_response(url=RISKY_USERS_URL, json={"value": []})
+        findings = await RiskyUsersCheck().run(graph)
         assert len(findings) == 0

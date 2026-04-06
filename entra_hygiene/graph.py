@@ -39,7 +39,10 @@ class GraphClient:
                 return await self.get(endpoint, _retries - 1)
             raise GraphError(503, "Service unavailable - max retries exceeded")
         if response.status_code in (401, 403):
-            body = response.json().get("error", {})
+            try:
+                body = response.json().get("error", {})
+            except ValueError:
+                body = {}
             raise GraphError(response.status_code, body.get("message", "Access denied"))
         response.raise_for_status()
         try:

@@ -20,7 +20,6 @@ def _iso_in(days: int) -> str:
 # APPS_001 - Expiring / Expired App Credentials
 
 class TestExpiringSecrets:
-    @pytest.mark.asyncio
     async def test_expired_secret_is_critical(self, graph, httpx_mock):
         httpx_mock.add_response(
             url=APPS_URL,
@@ -42,7 +41,6 @@ class TestExpiringSecrets:
         assert "expired" in findings[0].title.lower()
         assert "days ago" in findings[0].detail
 
-    @pytest.mark.asyncio
     async def test_expiring_secret_is_high(self, graph, httpx_mock):
         httpx_mock.add_response(
             url=APPS_URL,
@@ -63,7 +61,6 @@ class TestExpiringSecrets:
         assert findings[0].severity == Severity.HIGH
         assert "expires in" in findings[0].detail
 
-    @pytest.mark.asyncio
     async def test_expired_certificate_is_critical(self, graph, httpx_mock):
         httpx_mock.add_response(
             url=APPS_URL,
@@ -84,7 +81,6 @@ class TestExpiringSecrets:
         assert findings[0].severity == Severity.CRITICAL
         assert "certificate" in findings[0].title.lower()
 
-    @pytest.mark.asyncio
     async def test_fresh_secret_not_flagged(self, graph, httpx_mock):
         httpx_mock.add_response(
             url=APPS_URL,
@@ -103,7 +99,6 @@ class TestExpiringSecrets:
         findings = await ExpiringSecretsCheck().run(graph)
         assert len(findings) == 0
 
-    @pytest.mark.asyncio
     async def test_no_expiry_not_flagged(self, graph, httpx_mock):
         httpx_mock.add_response(
             url=APPS_URL,
@@ -122,7 +117,6 @@ class TestExpiringSecrets:
         findings = await ExpiringSecretsCheck().run(graph)
         assert len(findings) == 0
 
-    @pytest.mark.asyncio
     async def test_no_credentials_no_findings(self, graph, httpx_mock):
         httpx_mock.add_response(
             url=APPS_URL,
@@ -141,7 +135,6 @@ class TestExpiringSecrets:
 # APPS_002 - Ownerless App Registrations
 
 class TestOwnerlessApps:
-    @pytest.mark.asyncio
     async def test_ownerless_app_flagged(self, graph, httpx_mock):
         httpx_mock.add_response(
             url=OWNERLESS_APPS_URL,
@@ -156,7 +149,6 @@ class TestOwnerlessApps:
         assert findings[0].severity == Severity.MEDIUM
         assert "Orphan App" in findings[0].title
 
-    @pytest.mark.asyncio
     async def test_app_with_owner_not_flagged(self, graph, httpx_mock):
         httpx_mock.add_response(
             url=OWNERLESS_APPS_URL,

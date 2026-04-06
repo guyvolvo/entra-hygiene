@@ -28,6 +28,7 @@ from entra_hygiene.checks.users import (
     GlobalAdminCountCheck,
     MfaGapsCheck,
     PrivilegedGuestCheck,
+    RiskyUsersCheck,
     StaleAccountsCheck,
 )
 from entra_hygiene.config import settings
@@ -49,6 +50,7 @@ ALL_CHECKS = [
     MfaGapsCheck(),
     PrivilegedGuestCheck(),
     GlobalAdminCountCheck(),
+    RiskyUsersCheck(),
     ExpiringSecretsCheck(),
     OwnerlessAppsCheck(),
     MfaForAllCheck(),
@@ -73,9 +75,7 @@ async def _run_check(check, graph: GraphClient) -> tuple[str, list[Finding], Che
     try:
         findings = await check.run(graph)
         return check.id, findings, None
-    except (Exception,) as e:
-        if isinstance(e, (KeyboardInterrupt, SystemExit)):
-            raise
+    except Exception as e:
         error = CheckError(check_id=check.id, check_title=check.title, error=str(e))
         return check.id, [], error
 
@@ -287,8 +287,10 @@ def serve(
             try:
                 token = get_token(auth)
                 graph = GraphClient(access_token=token)
-                result = await _run_scan(graph, ALL_CHECKS)
-                await graph.close()
+                try:
+                    result = await _run_scan(graph, ALL_CHECKS)
+                finally:
+                    await graph.close()
                 update_metrics(result)
                 _send_email_report(token, result)
                 console.print(
