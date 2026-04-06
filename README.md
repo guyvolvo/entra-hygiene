@@ -134,6 +134,8 @@ REPORT_EMAIL=recipient@yourdomain.com
 
 `docker compose up` runs the tool as a long-lived service. It performs a full scan on startup, then rescans every `SCAN_INTERVAL_MINUTES` minutes, re-authenticating before each run to handle token expiry.
 
+Serve mode exposes Prometheus metrics only. It does not send email reports - email delivery is handled by the `scan` command and the GitHub Actions workflow.
+
 Metrics are exposed at `:5454/metrics` in Prometheus text format. Add this to your existing scrape config:
 
 ```yaml
