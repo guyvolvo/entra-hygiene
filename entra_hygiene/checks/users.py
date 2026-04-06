@@ -4,7 +4,7 @@ from datetime import datetime
 
 from entra_hygiene.checks.base import BaseCheck
 from entra_hygiene.config import settings
-from entra_hygiene.graph import GraphClient
+from entra_hygiene.graph import GraphClient, GraphError
 from entra_hygiene.models import Finding, Severity
 
 GLOBAL_ADMIN_ROLE_TEMPLATE_ID = "62e90394-69f5-4237-9190-012177145e10"
@@ -131,11 +131,17 @@ class RiskyUsersCheck(BaseCheck):
     }
 
     async def run(self, graph: GraphClient) -> list[Finding]:
-        users = await graph.get_all(
-            "/identityProtection/riskyUsers"
-            "?$select=id,userPrincipalName,displayName,riskLevel,riskState,riskLastUpdatedDateTime"
-            "&$filter=riskState eq 'atRisk' or riskState eq 'confirmedCompromised'"
-        )
+        try:
+            users = await graph.get_all(
+                "/identityProtection/riskyUsers"
+                "?$select=id,userPrincipalName,displayName,riskLevel,riskState,riskLastUpdatedDateTime"
+                "&$filter=riskState eq 'atRisk' or riskState eq 'confirmedCompromised'"
+            )
+        except GraphError as e:
+            if e.status_code == 400:
+                # Endpoint returns 400 when tenant lacks Entra ID P2 license.
+                return []
+            raise
         findings: list[Finding] = []
         for user in users:
             state = user.get("riskState", "")
