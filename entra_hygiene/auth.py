@@ -1,5 +1,8 @@
 from __future__ import annotations
 
+import os
+
+import httpx
 import msal
 
 from entra_hygiene.config import settings
@@ -15,12 +18,45 @@ def _build_authority() -> str:
     return f"https://login.microsoftonline.com/{settings.tenant_id}"
 
 
+def _try_acquire_token_oidc() -> str | None:
+    request_token = os.environ.get("ACTIONS_ID_TOKEN_REQUEST_TOKEN", "")
+    request_url = os.environ.get("ACTIONS_ID_TOKEN_REQUEST_URL", "")
+    if not request_token or not request_url:
+        return None
+    try:
+        resp = httpx.get(
+            f"{request_url}&audience=api://AzureADTokenExchange",
+            headers={"Authorization": f"Bearer {request_token}"},
+            timeout=10,
+        )
+        if resp.status_code != 200:
+            return None
+        github_token = resp.json().get("value", "")
+        if not github_token:
+            return None
+        app = msal.ConfidentialClientApplication(
+            client_id=settings.client_id,
+            authority=_build_authority(),
+            client_credential={
+                "client_assertion": github_token,
+                "client_assertion_type": "urn:ietf:params:oauth:client-assertion-type:jwt-bearer",
+            },
+        )
+        result = app.acquire_token_for_client(scopes=SCOPES)
+        return result.get("access_token")
+    except Exception:
+        return None
+
+
 def acquire_token_client_credentials() -> str:
     if not settings.tenant_id or not settings.client_id or not settings.client_secret:
         raise AuthError(
             "Client credentials auth requires TENANT_ID, CLIENT_ID, and CLIENT_SECRET "
             "to be set in .env or environment variables."
         )
+    oidc_token = _try_acquire_token_oidc()
+    if oidc_token:
+        return oidc_token
     try:
         app = msal.ConfidentialClientApplication(
             client_id=settings.client_id,
