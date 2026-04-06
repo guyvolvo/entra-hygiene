@@ -296,7 +296,6 @@ def serve(
                 finally:
                     await graph.close()
                 update_metrics(result)
-                _send_email_report(token, result)
                 console.print(
                     f"[dim]{datetime.now():%Y-%m-%d %H:%M:%S}[/dim] "
                     f"Scan complete. {len(result.findings)} findings, "
