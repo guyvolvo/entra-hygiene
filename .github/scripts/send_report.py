@@ -11,11 +11,9 @@ import sys
 from urllib.parse import quote
 
 import httpx
-import msal
 
-TENANT_ID = os.environ.get("TENANT_ID", "")
-CLIENT_ID = os.environ.get("CLIENT_ID", "")
-CLIENT_SECRET = os.environ.get("CLIENT_SECRET", "")
+from entra_hygiene.auth import AuthError, get_token
+
 SENDER_EMAIL = os.environ.get("SENDER_EMAIL", "")
 REPORT_EMAIL = os.environ.get("REPORT_EMAIL", "")
 
@@ -23,17 +21,11 @@ if not SENDER_EMAIL or not REPORT_EMAIL:
     print("SENDER_EMAIL or REPORT_EMAIL not configured. Skipping email.")
     sys.exit(0)
 
-app = msal.ConfidentialClientApplication(
-    client_id=CLIENT_ID,
-    client_credential=CLIENT_SECRET,
-    authority=f"https://login.microsoftonline.com/{TENANT_ID}",
-)
-result = app.acquire_token_for_client(scopes=["https://graph.microsoft.com/.default"])
-if "access_token" not in result:
-    print(f"Auth failed: {result.get('error_description', result.get('error', 'unknown'))}")
+try:
+    token = get_token("client-credentials")
+except AuthError as e:
+    print(f"Auth failed: {e}")
     sys.exit(1)
-
-token = result["access_token"]
 
 with open("report.html", encoding="utf-8") as f:
     html_body = f.read()
