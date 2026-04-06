@@ -2,7 +2,7 @@
 
 A command-line tool that audits your Entra ID (Azure AD) tenant and reports security and hygiene issues across users, apps, policies, roles, and groups.
 
-It connects to Microsoft Graph API, runs a suite of hygiene checks across users, apps, Conditional Access policies, groups, and roles, then produces a severity-graded report - in your terminal, as JSON, as a self-contained HTML file, or as live Prometheus metrics for your existing stack.
+It connects to Microsoft Graph API, runs 14 hygiene checks across users, apps, Conditional Access policies, groups, and roles, then produces a severity-graded report - in your terminal, as JSON, as a self-contained HTML file, or as live Prometheus metrics for your existing stack.
 
 Built for IT admins and security teams at SMBs who need a scriptable, schedulable alternative to clicking through the Azure portal.
 
