@@ -233,8 +233,6 @@ def scan(
         console.print(f"[bold red]Authentication failed:[/bold red] {e}")
         raise typer.Exit(code=1)
 
-    graph = GraphClient(access_token=token)
-
     check_list = ALL_CHECKS
     if checks:
         requested = {c.strip().upper() for c in checks.split(",")}
@@ -246,8 +244,14 @@ def scan(
             console.print("[bold red]No valid checks selected.[/bold red]")
             raise typer.Exit(code=1)
 
-    result = asyncio.run(_run_scan(graph, check_list))
-    asyncio.run(graph.close())
+    async def _scan() -> ScanResult:
+        graph = GraphClient(access_token=token)
+        try:
+            return await _run_scan(graph, check_list)
+        finally:
+            await graph.close()
+
+    result = asyncio.run(_scan())
 
     if output == "json":
         _print_json_report(result)
