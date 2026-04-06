@@ -153,12 +153,33 @@ scrape_configs:
 
 ```
 entra_hygiene_findings_total{severity="critical|high|medium|low|info"}
-entra_hygiene_findings_by_check{check_id="USER_001|APPS_001|..."}
+entra_hygiene_findings_by_check{check_id, check_title}
+entra_hygiene_findings_by_check_severity{check_id, check_title, severity}
+entra_hygiene_finding{check_id, severity, title, affected_object}
 entra_hygiene_check_errors_total
+entra_hygiene_check_last_success_timestamp{check_id}
 entra_hygiene_last_scan_timestamp_seconds
 entra_hygiene_scan_duration_seconds
 entra_hygiene_scan_success
+entra_hygiene_mfa_policy_enforced
+entra_hygiene_legacy_auth_blocked
 ```
+
+---
+
+## Grafana Dashboard
+
+A pre-built dashboard is included at `grafana/dashboard.json`.
+
+**Import:** Grafana > Dashboards > Import > Upload JSON file > select `grafana/dashboard.json` > pick your Prometheus datasource.
+
+**Panels:**
+
+- **Scan Health** - last scan status, timestamp, duration, check errors, MFA policy enforcement, legacy auth block status
+- **Findings by Severity** - individual stat panels for critical, high, medium, low, info with color coding
+- **Findings per Check** - bar gauges showing finding counts per check by name, and a critical/high breakdown
+- **All Active Findings** - filterable table with check, severity (color-coded), finding title, and affected object
+- **Trends** - findings over time by severity, scan duration, and check errors over time
 
 ---
 
