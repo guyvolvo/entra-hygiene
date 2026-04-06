@@ -1,10 +1,10 @@
 # entra-hygiene
 
-A command-line tool that audits your Entra ID (Azure AD) tenant and reports security and hygiene issues across users, apps, policies, roles, and groups.
+An automated Entra ID (Azure AD) security auditing platform that continuously monitors your tenant for hygiene and security issues across users, apps, Conditional Access policies, roles, and groups.
 
-It connects to Microsoft Graph API, runs 14 hygiene checks across users, apps, Conditional Access policies, groups, and roles, then produces a severity-graded report - in your terminal, as JSON, as a self-contained HTML file, or as live Prometheus metrics for your existing stack.
+Connects to Microsoft Graph API and runs 14 checks on every scan, producing severity-graded findings as terminal output, JSON, self-contained HTML, or live Prometheus metrics. Deploy it as a background service to keep Grafana dashboards up to date, schedule it via GitHub Actions for weekly HTML/JSON report artifacts and email delivery, or run a one-off scan on demand.
 
-Built for IT admins and security teams at SMBs who need a scriptable, schedulable alternative to clicking through the Azure portal.
+Built for IT admins and security teams at SMBs who need a scriptable, observable, schedulable alternative to manually clicking through the Azure portal.
 
 <img width="591" height="489" alt="entra-hygiene-cli" src="https://github.com/user-attachments/assets/0833e812-2e6c-4f04-9c15-d783beafd04f" />
 
