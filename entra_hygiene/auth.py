@@ -49,14 +49,19 @@ def _try_acquire_token_oidc() -> str | None:
 
 
 def acquire_token_client_credentials() -> str:
-    if not settings.tenant_id or not settings.client_id or not settings.client_secret:
+    if not settings.tenant_id or not settings.client_id:
         raise AuthError(
-            "Client credentials auth requires TENANT_ID, CLIENT_ID, and CLIENT_SECRET "
+            "Client credentials auth requires TENANT_ID and CLIENT_ID "
             "to be set in .env or environment variables."
         )
     oidc_token = _try_acquire_token_oidc()
     if oidc_token:
         return oidc_token
+    if not settings.client_secret:
+        raise AuthError(
+            "Client credentials auth requires CLIENT_SECRET when OIDC is not available. "
+            "Set CLIENT_SECRET in .env or environment variables."
+        )
     try:
         app = msal.ConfidentialClientApplication(
             client_id=settings.client_id,
