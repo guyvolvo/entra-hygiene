@@ -2,7 +2,7 @@ name: Entra Hygiene Scan
 
 on:
   schedule:
-    - cron: '0 9 * * 0'  # Sunday 09:00 UTC
+    - cron: '0 6 * * 0'  # Sunday 06:00 UTC (09:00 Jerusalem)
   workflow_dispatch:
     inputs:
       checks:
