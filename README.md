@@ -6,6 +6,10 @@ It connects to Microsoft Graph API, runs 14 hygiene checks across users, apps, C
 
 Built for IT admins and security teams at SMBs who need a scriptable, schedulable alternative to clicking through the Azure portal.
 
+<img width="591" height="489" alt="entra-hygiene-cli" src="https://github.com/user-attachments/assets/0833e812-2e6c-4f04-9c15-d783beafd04f" />
+
+<img width="980" height="363" alt="entra-hygiene" src="https://github.com/user-attachments/assets/387962ad-ae60-480e-bdbf-93b6119129f7" />
+
 ---
 
 ## What It Checks
