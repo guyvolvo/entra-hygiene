@@ -35,12 +35,14 @@ jobs:
           CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
           CHECKS_INPUT: ${{ github.event.inputs.checks }}
         run: |
+          set +e
           if [ -n "$CHECKS_INPUT" ]; then
             entra-hygiene scan --output json --checks "$CHECKS_INPUT" > report.json
           else
             entra-hygiene scan --output json > report.json
           fi
           scan_code=$?
+          set -e
           python3 -c "
           from entra_hygiene.models import ScanResult
           from entra_hygiene.reporters.html_reporter import render_html
