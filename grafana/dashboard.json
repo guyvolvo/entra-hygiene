@@ -278,7 +278,7 @@
         {
           "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
           "expr": "entra_hygiene_findings_by_check > 0",
-          "legendFormat": "{{check_id}}",
+          "legendFormat": "{{check_title}}",
           "instant": true
         }
       ]
@@ -328,7 +328,7 @@
         {
           "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
           "expr": "entra_hygiene_findings_by_check_severity{severity=~\"critical|high\"} > 0",
-          "legendFormat": "{{check_id}}",
+          "legendFormat": "{{check_title}} / {{severity}}",
           "instant": true
         }
       ]

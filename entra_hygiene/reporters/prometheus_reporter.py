@@ -4,6 +4,23 @@ from prometheus_client import Gauge, start_http_server
 
 from entra_hygiene.models import ScanResult
 
+_CHECK_NAMES: dict[str, str] = {
+    "USER_001": "Stale Accounts",
+    "USER_002": "Accounts Without MFA",
+    "USER_003": "Guest Accounts with Privileged Roles",
+    "USER_004": "Global Administrator Count",
+    "USER_005": "Risky Users",
+    "APPS_001": "Expiring App Credentials",
+    "APPS_002": "Ownerless App Registrations",
+    "POLICY_001": "No MFA Policy",
+    "POLICY_002": "Legacy Auth Not Blocked",
+    "POLICY_003": "Report-Only Policies",
+    "ROLES_001": "Permanent Privileged Assignments",
+    "ROLES_002": "Privileged Service Principals",
+    "GROUPS_001": "Groups Without Owners",
+    "GROUPS_002": "Empty Groups",
+}
+
 _findings_by_severity = Gauge(
     "entra_hygiene_findings_total",
     "Number of active findings by severity",
@@ -12,12 +29,12 @@ _findings_by_severity = Gauge(
 _findings_by_check = Gauge(
     "entra_hygiene_findings_by_check",
     "Number of findings per check",
-    ["check_id"],
+    ["check_id", "check_title"],
 )
 _findings_by_check_severity = Gauge(
     "entra_hygiene_findings_by_check_severity",
     "Number of findings per check per severity",
-    ["check_id", "severity"],
+    ["check_id", "check_title", "severity"],
 )
 _finding = Gauge(
     "entra_hygiene_finding",
@@ -87,10 +104,17 @@ def update_metrics(result: ScanResult) -> None:
         ).set(1)
 
     for check_id, count in check_counts.items():
-        _findings_by_check.labels(check_id=check_id).set(count)
+        _findings_by_check.labels(
+            check_id=check_id,
+            check_title=_CHECK_NAMES.get(check_id, check_id),
+        ).set(count)
 
     for (check_id, severity), count in check_severity_counts.items():
-        _findings_by_check_severity.labels(check_id=check_id, severity=severity).set(count)
+        _findings_by_check_severity.labels(
+            check_id=check_id,
+            check_title=_CHECK_NAMES.get(check_id, check_id),
+            severity=severity,
+        ).set(count)
 
     finished_ts = result.finished_at.timestamp()
     for check_id in result.checks_ran:
