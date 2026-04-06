@@ -10,47 +10,15 @@
     }
   ],
   "__requires": [
-    {
-      "type": "grafana",
-      "id": "grafana",
-      "name": "Grafana",
-      "version": "10.0.0"
-    },
-    {
-      "type": "datasource",
-      "id": "prometheus",
-      "name": "Prometheus",
-      "version": "1.0.0"
-    },
-    {
-      "type": "panel",
-      "id": "stat",
-      "name": "Stat",
-      "version": ""
-    },
-    {
-      "type": "panel",
-      "id": "table",
-      "name": "Table",
-      "version": ""
-    },
-    {
-      "type": "panel",
-      "id": "bargauge",
-      "name": "Bar gauge",
-      "version": ""
-    },
-    {
-      "type": "panel",
-      "id": "timeseries",
-      "name": "Time series",
-      "version": ""
-    }
+    { "type": "grafana", "id": "grafana", "name": "Grafana", "version": "10.0.0" },
+    { "type": "datasource", "id": "prometheus", "name": "Prometheus", "version": "1.0.0" },
+    { "type": "panel", "id": "stat", "name": "Stat", "version": "" },
+    { "type": "panel", "id": "table", "name": "Table", "version": "" },
+    { "type": "panel", "id": "bargauge", "name": "Bar gauge", "version": "" },
+    { "type": "panel", "id": "timeseries", "name": "Time series", "version": "" }
   ],
-  "annotations": {
-    "list": []
-  },
-  "description": "Entra ID hygiene audit dashboard - findings, affected objects, and scan health",
+  "annotations": { "list": [] },
+  "description": "Entra ID hygiene audit dashboard",
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
@@ -69,26 +37,19 @@
       "fieldConfig": {
         "defaults": {
           "mappings": [
-            { "options": { "0": { "color": "red", "text": "FAILED" }, "1": { "color": "green", "text": "OK" } }, "type": "value" }
+            { "type": "value", "options": { "0": { "text": "FAILED", "color": "dark-red", "index": 0 }, "1": { "text": "OK", "color": "green", "index": 1 } } }
           ],
-          "thresholds": { "mode": "absolute", "steps": [{ "color": "red", "value": null }, { "color": "green", "value": 1 }] },
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "dark-red", "value": null }, { "color": "green", "value": 1 }] },
           "color": { "mode": "thresholds" }
         },
         "overrides": []
       },
-      "gridPos": { "h": 4, "w": 4, "x": 0, "y": 1 },
+      "gridPos": { "h": 4, "w": 3, "x": 0, "y": 1 },
       "id": 1,
       "options": { "colorMode": "background", "graphMode": "none", "justifyMode": "center", "orientation": "auto", "reduceOptions": { "calcs": ["lastNotNull"] } },
       "title": "Last Scan",
       "type": "stat",
-      "targets": [
-        {
-          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-          "expr": "entra_hygiene_scan_success",
-          "legendFormat": "",
-          "instant": true
-        }
-      ]
+      "targets": [{ "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" }, "expr": "entra_hygiene_scan_success", "legendFormat": "", "instant": true }]
     },
     {
       "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
@@ -100,19 +61,12 @@
         },
         "overrides": []
       },
-      "gridPos": { "h": 4, "w": 5, "x": 4, "y": 1 },
+      "gridPos": { "h": 4, "w": 4, "x": 3, "y": 1 },
       "id": 2,
       "options": { "colorMode": "value", "graphMode": "none", "justifyMode": "center", "orientation": "auto", "reduceOptions": { "calcs": ["lastNotNull"] } },
       "title": "Last Scan Time",
       "type": "stat",
-      "targets": [
-        {
-          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-          "expr": "entra_hygiene_last_scan_timestamp_seconds * 1000",
-          "legendFormat": "",
-          "instant": true
-        }
-      ]
+      "targets": [{ "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" }, "expr": "entra_hygiene_last_scan_timestamp_seconds * 1000", "legendFormat": "", "instant": true }]
     },
     {
       "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
@@ -124,94 +78,66 @@
         },
         "overrides": []
       },
-      "gridPos": { "h": 4, "w": 4, "x": 9, "y": 1 },
+      "gridPos": { "h": 4, "w": 3, "x": 7, "y": 1 },
       "id": 3,
       "options": { "colorMode": "value", "graphMode": "none", "justifyMode": "center", "orientation": "auto", "reduceOptions": { "calcs": ["lastNotNull"] } },
       "title": "Scan Duration",
       "type": "stat",
-      "targets": [
-        {
-          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-          "expr": "entra_hygiene_scan_duration_seconds",
-          "legendFormat": "",
-          "instant": true
-        }
-      ]
+      "targets": [{ "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" }, "expr": "entra_hygiene_scan_duration_seconds", "legendFormat": "", "instant": true }]
     },
     {
       "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
       "fieldConfig": {
         "defaults": {
-          "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }, { "color": "red", "value": 1 }] },
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }, { "color": "dark-red", "value": 1 }] },
+          "color": { "mode": "thresholds" }
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 4, "w": 3, "x": 10, "y": 1 },
+      "id": 4,
+      "options": { "colorMode": "background", "graphMode": "none", "justifyMode": "center", "orientation": "auto", "reduceOptions": { "calcs": ["lastNotNull"] } },
+      "title": "Check Errors",
+      "type": "stat",
+      "targets": [{ "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" }, "expr": "entra_hygiene_check_errors_total", "legendFormat": "", "instant": true }]
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [
+            { "type": "value", "options": { "0": { "text": "NOT ENFORCED", "color": "dark-red", "index": 0 }, "1": { "text": "ENFORCED", "color": "green", "index": 1 } } }
+          ],
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "dark-red", "value": null }, { "color": "green", "value": 1 }] },
           "color": { "mode": "thresholds" }
         },
         "overrides": []
       },
       "gridPos": { "h": 4, "w": 4, "x": 13, "y": 1 },
-      "id": 4,
+      "id": 5,
       "options": { "colorMode": "background", "graphMode": "none", "justifyMode": "center", "orientation": "auto", "reduceOptions": { "calcs": ["lastNotNull"] } },
-      "title": "Check Errors",
+      "title": "MFA Policy",
       "type": "stat",
-      "targets": [
-        {
-          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-          "expr": "entra_hygiene_check_errors_total",
-          "legendFormat": "",
-          "instant": true
-        }
-      ]
+      "targets": [{ "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" }, "expr": "entra_hygiene_mfa_policy_enforced", "legendFormat": "", "instant": true }]
     },
     {
       "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
       "fieldConfig": {
         "defaults": {
           "mappings": [
-            { "options": { "0": { "color": "red", "text": "NOT ENFORCED" }, "1": { "color": "green", "text": "ENFORCED" } }, "type": "value" }
+            { "type": "value", "options": { "0": { "text": "NOT BLOCKED", "color": "dark-red", "index": 0 }, "1": { "text": "BLOCKED", "color": "green", "index": 1 } } }
           ],
-          "thresholds": { "mode": "absolute", "steps": [{ "color": "red", "value": null }, { "color": "green", "value": 1 }] },
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "dark-red", "value": null }, { "color": "green", "value": 1 }] },
           "color": { "mode": "thresholds" }
         },
         "overrides": []
       },
       "gridPos": { "h": 4, "w": 4, "x": 17, "y": 1 },
-      "id": 5,
-      "options": { "colorMode": "background", "graphMode": "none", "justifyMode": "center", "orientation": "auto", "reduceOptions": { "calcs": ["lastNotNull"] } },
-      "title": "MFA Policy",
-      "type": "stat",
-      "targets": [
-        {
-          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-          "expr": "entra_hygiene_mfa_policy_enforced",
-          "legendFormat": "",
-          "instant": true
-        }
-      ]
-    },
-    {
-      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-      "fieldConfig": {
-        "defaults": {
-          "mappings": [
-            { "options": { "0": { "color": "red", "text": "NOT BLOCKED" }, "1": { "color": "green", "text": "BLOCKED" } }, "type": "value" }
-          ],
-          "thresholds": { "mode": "absolute", "steps": [{ "color": "red", "value": null }, { "color": "green", "value": 1 }] },
-          "color": { "mode": "thresholds" }
-        },
-        "overrides": []
-      },
-      "gridPos": { "h": 4, "w": 3, "x": 21, "y": 1 },
       "id": 6,
       "options": { "colorMode": "background", "graphMode": "none", "justifyMode": "center", "orientation": "auto", "reduceOptions": { "calcs": ["lastNotNull"] } },
       "title": "Legacy Auth",
       "type": "stat",
-      "targets": [
-        {
-          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-          "expr": "entra_hygiene_legacy_auth_blocked",
-          "legendFormat": "",
-          "instant": true
-        }
-      ]
+      "targets": [{ "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" }, "expr": "entra_hygiene_legacy_auth_blocked", "legendFormat": "", "instant": true }]
     },
     {
       "collapsed": false,
@@ -224,41 +150,85 @@
       "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
       "fieldConfig": {
         "defaults": {
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }, { "color": "dark-red", "value": 1 }] },
+          "color": { "mode": "thresholds" }
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 4, "w": 4, "x": 0, "y": 6 },
+      "id": 20,
+      "options": { "colorMode": "background", "graphMode": "none", "justifyMode": "center", "orientation": "auto", "reduceOptions": { "calcs": ["lastNotNull"] } },
+      "title": "Critical",
+      "type": "stat",
+      "targets": [{ "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" }, "expr": "entra_hygiene_findings_total{severity=\"critical\"}", "legendFormat": "", "instant": true }]
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }, { "color": "orange", "value": 1 }] },
+          "color": { "mode": "thresholds" }
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 4, "w": 4, "x": 4, "y": 6 },
+      "id": 21,
+      "options": { "colorMode": "background", "graphMode": "none", "justifyMode": "center", "orientation": "auto", "reduceOptions": { "calcs": ["lastNotNull"] } },
+      "title": "High",
+      "type": "stat",
+      "targets": [{ "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" }, "expr": "entra_hygiene_findings_total{severity=\"high\"}", "legendFormat": "", "instant": true }]
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "fieldConfig": {
+        "defaults": {
           "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }, { "color": "yellow", "value": 1 }] },
           "color": { "mode": "thresholds" }
         },
-        "overrides": [
-          { "matcher": { "id": "byName", "options": "critical" }, "properties": [{ "id": "thresholds", "value": { "mode": "absolute", "steps": [{ "color": "green", "value": null }, { "color": "dark-red", "value": 1 }] } }, { "id": "color", "value": { "mode": "thresholds" } }] },
-          { "matcher": { "id": "byName", "options": "high" }, "properties": [{ "id": "thresholds", "value": { "mode": "absolute", "steps": [{ "color": "green", "value": null }, { "color": "orange", "value": 1 }] } }, { "id": "color", "value": { "mode": "thresholds" } }] },
-          { "matcher": { "id": "byName", "options": "medium" }, "properties": [{ "id": "thresholds", "value": { "mode": "absolute", "steps": [{ "color": "green", "value": null }, { "color": "yellow", "value": 1 }] } }, { "id": "color", "value": { "mode": "thresholds" } }] },
-          { "matcher": { "id": "byName", "options": "low" }, "properties": [{ "id": "thresholds", "value": { "mode": "absolute", "steps": [{ "color": "green", "value": null }, { "color": "blue", "value": 1 }] } }, { "id": "color", "value": { "mode": "thresholds" } }] },
-          { "matcher": { "id": "byName", "options": "info" }, "properties": [{ "id": "thresholds", "value": { "mode": "absolute", "steps": [{ "color": "green", "value": null }, { "color": "gray", "value": 1 }] } }, { "id": "color", "value": { "mode": "thresholds" } }] }
-        ]
+        "overrides": []
       },
-      "gridPos": { "h": 5, "w": 24, "x": 0, "y": 6 },
-      "id": 7,
-      "options": {
-        "colorMode": "background",
-        "graphMode": "none",
-        "justifyMode": "center",
-        "orientation": "horizontal",
-        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
-        "text": {}
-      },
-      "title": "Findings by Severity",
+      "gridPos": { "h": 4, "w": 4, "x": 8, "y": 6 },
+      "id": 22,
+      "options": { "colorMode": "background", "graphMode": "none", "justifyMode": "center", "orientation": "auto", "reduceOptions": { "calcs": ["lastNotNull"] } },
+      "title": "Medium",
       "type": "stat",
-      "targets": [
-        {
-          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-          "expr": "entra_hygiene_findings_total",
-          "legendFormat": "{{severity}}",
-          "instant": true
-        }
-      ]
+      "targets": [{ "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" }, "expr": "entra_hygiene_findings_total{severity=\"medium\"}", "legendFormat": "", "instant": true }]
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }, { "color": "blue", "value": 1 }] },
+          "color": { "mode": "thresholds" }
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 4, "w": 4, "x": 12, "y": 6 },
+      "id": 23,
+      "options": { "colorMode": "background", "graphMode": "none", "justifyMode": "center", "orientation": "auto", "reduceOptions": { "calcs": ["lastNotNull"] } },
+      "title": "Low",
+      "type": "stat",
+      "targets": [{ "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" }, "expr": "entra_hygiene_findings_total{severity=\"low\"}", "legendFormat": "", "instant": true }]
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }, { "color": "gray", "value": 1 }] },
+          "color": { "mode": "thresholds" }
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 4, "w": 4, "x": 16, "y": 6 },
+      "id": 24,
+      "options": { "colorMode": "background", "graphMode": "none", "justifyMode": "center", "orientation": "auto", "reduceOptions": { "calcs": ["lastNotNull"] } },
+      "title": "Info",
+      "type": "stat",
+      "targets": [{ "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" }, "expr": "entra_hygiene_findings_total{severity=\"info\"}", "legendFormat": "", "instant": true }]
     },
     {
       "collapsed": false,
-      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 11 },
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 10 },
       "id": 102,
       "title": "Findings by Check",
       "type": "row"
@@ -269,11 +239,29 @@
         "defaults": {
           "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }, { "color": "yellow", "value": 1 }, { "color": "red", "value": 5 }] },
           "color": { "mode": "thresholds" },
-          "unit": "short"
+          "unit": "short",
+          "mappings": [
+            { "type": "value", "options": {
+              "USER_001": { "text": "Stale Accounts", "index": 0 },
+              "USER_002": { "text": "Accounts Without MFA", "index": 1 },
+              "USER_003": { "text": "Guest Accounts with Privileged Roles", "index": 2 },
+              "USER_004": { "text": "Global Administrator Count", "index": 3 },
+              "USER_005": { "text": "Risky Users", "index": 4 },
+              "APPS_001": { "text": "Expiring App Credentials", "index": 5 },
+              "APPS_002": { "text": "Ownerless App Registrations", "index": 6 },
+              "POLICY_001": { "text": "No MFA Policy", "index": 7 },
+              "POLICY_002": { "text": "Legacy Auth Not Blocked", "index": 8 },
+              "POLICY_003": { "text": "Report-Only Policies", "index": 9 },
+              "ROLES_001": { "text": "Permanent Privileged Assignments", "index": 10 },
+              "ROLES_002": { "text": "Privileged Service Principals", "index": 11 },
+              "GROUPS_001": { "text": "Groups Without Owners", "index": 12 },
+              "GROUPS_002": { "text": "Empty Groups", "index": 13 }
+            }}
+          ]
         },
         "overrides": []
       },
-      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 12 },
+      "gridPos": { "h": 10, "w": 12, "x": 0, "y": 11 },
       "id": 8,
       "options": {
         "displayMode": "gradient",
@@ -299,13 +287,31 @@
       "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
       "fieldConfig": {
         "defaults": {
-          "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }, { "color": "yellow", "value": 1 }, { "color": "red", "value": 3 }] },
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }, { "color": "orange", "value": 1 }, { "color": "dark-red", "value": 3 }] },
           "color": { "mode": "thresholds" },
-          "unit": "short"
+          "unit": "short",
+          "mappings": [
+            { "type": "value", "options": {
+              "USER_001": { "text": "Stale Accounts", "index": 0 },
+              "USER_002": { "text": "Accounts Without MFA", "index": 1 },
+              "USER_003": { "text": "Guest Accounts with Privileged Roles", "index": 2 },
+              "USER_004": { "text": "Global Administrator Count", "index": 3 },
+              "USER_005": { "text": "Risky Users", "index": 4 },
+              "APPS_001": { "text": "Expiring App Credentials", "index": 5 },
+              "APPS_002": { "text": "Ownerless App Registrations", "index": 6 },
+              "POLICY_001": { "text": "No MFA Policy", "index": 7 },
+              "POLICY_002": { "text": "Legacy Auth Not Blocked", "index": 8 },
+              "POLICY_003": { "text": "Report-Only Policies", "index": 9 },
+              "ROLES_001": { "text": "Permanent Privileged Assignments", "index": 10 },
+              "ROLES_002": { "text": "Privileged Service Principals", "index": 11 },
+              "GROUPS_001": { "text": "Groups Without Owners", "index": 12 },
+              "GROUPS_002": { "text": "Empty Groups", "index": 13 }
+            }}
+          ]
         },
         "overrides": []
       },
-      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 12 },
+      "gridPos": { "h": 10, "w": 12, "x": 12, "y": 11 },
       "id": 9,
       "options": {
         "displayMode": "gradient",
@@ -322,66 +328,40 @@
         {
           "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
           "expr": "entra_hygiene_findings_by_check_severity{severity=~\"critical|high\"} > 0",
-          "legendFormat": "{{check_id}} / {{severity}}",
+          "legendFormat": "{{check_id}}",
           "instant": true
         }
       ]
     },
     {
       "collapsed": false,
-      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 20 },
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 21 },
       "id": 103,
-      "title": "Active Findings - All Objects",
+      "title": "Active Findings",
       "type": "row"
     },
     {
       "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
       "fieldConfig": {
         "defaults": {
-          "custom": {
-            "align": "left",
-            "displayMode": "auto",
-            "filterable": true
-          }
+          "custom": { "align": "left", "displayMode": "auto", "filterable": true }
         },
         "overrides": [
           {
             "matcher": { "id": "byName", "options": "severity" },
             "properties": [
-              {
-                "id": "custom.displayMode",
-                "value": "color-background"
-              },
-              {
-                "id": "thresholds",
-                "value": {
-                  "mode": "absolute",
-                  "steps": [{ "color": "green", "value": null }]
-                }
-              },
-              {
-                "id": "mappings",
-                "value": [
-                  { "options": { "critical": { "color": "dark-red", "index": 0 } }, "type": "value" },
-                  { "options": { "high": { "color": "orange", "index": 1 } }, "type": "value" },
-                  { "options": { "medium": { "color": "yellow", "index": 2 } }, "type": "value" },
-                  { "options": { "low": { "color": "blue", "index": 3 } }, "type": "value" },
-                  { "options": { "info": { "color": "gray", "index": 4 } }, "type": "value" }
-                ]
-              }
+              { "id": "custom.displayMode", "value": "color-background" },
+              { "id": "thresholds", "value": { "mode": "absolute", "steps": [{ "color": "green", "value": null }] } },
+              { "id": "mappings", "value": [
+                { "type": "value", "options": { "critical": { "color": "dark-red", "index": 0 }, "high": { "color": "orange", "index": 1 }, "medium": { "color": "yellow", "index": 2 }, "low": { "color": "blue", "index": 3 }, "info": { "color": "gray", "index": 4 } } }
+              ]}
             ]
           },
-          {
-            "matcher": { "id": "byName", "options": "Value" },
-            "properties": [{ "id": "custom.hidden", "value": true }]
-          },
-          {
-            "matcher": { "id": "byName", "options": "Time" },
-            "properties": [{ "id": "custom.hidden", "value": true }]
-          }
+          { "matcher": { "id": "byName", "options": "Value" }, "properties": [{ "id": "custom.hidden", "value": true }] },
+          { "matcher": { "id": "byName", "options": "Time" }, "properties": [{ "id": "custom.hidden", "value": true }] }
         ]
       },
-      "gridPos": { "h": 12, "w": 24, "x": 0, "y": 21 },
+      "gridPos": { "h": 12, "w": 24, "x": 0, "y": 22 },
       "id": 10,
       "options": {
         "footer": { "show": false },
@@ -417,7 +397,7 @@
     },
     {
       "collapsed": false,
-      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 33 },
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 34 },
       "id": 104,
       "title": "Trends",
       "type": "row"
@@ -427,20 +407,18 @@
       "fieldConfig": {
         "defaults": {
           "color": { "mode": "palette-classic" },
-          "custom": {
-            "lineWidth": 2,
-            "fillOpacity": 10
-          },
+          "custom": { "lineWidth": 2, "fillOpacity": 10 },
           "unit": "short"
         },
         "overrides": [
           { "matcher": { "id": "byName", "options": "critical" }, "properties": [{ "id": "color", "value": { "fixedColor": "dark-red", "mode": "fixed" } }] },
           { "matcher": { "id": "byName", "options": "high" }, "properties": [{ "id": "color", "value": { "fixedColor": "orange", "mode": "fixed" } }] },
           { "matcher": { "id": "byName", "options": "medium" }, "properties": [{ "id": "color", "value": { "fixedColor": "yellow", "mode": "fixed" } }] },
-          { "matcher": { "id": "byName", "options": "low" }, "properties": [{ "id": "color", "value": { "fixedColor": "blue", "mode": "fixed" } }] }
+          { "matcher": { "id": "byName", "options": "low" }, "properties": [{ "id": "color", "value": { "fixedColor": "blue", "mode": "fixed" } }] },
+          { "matcher": { "id": "byName", "options": "info" }, "properties": [{ "id": "color", "value": { "fixedColor": "gray", "mode": "fixed" } }] }
         ]
       },
-      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 34 },
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 35 },
       "id": 11,
       "options": {
         "legend": { "calcs": ["lastNotNull"], "displayMode": "table", "placement": "right" },
@@ -449,28 +427,23 @@
       "title": "Findings Over Time by Severity",
       "type": "timeseries",
       "targets": [
-        {
-          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-          "expr": "entra_hygiene_findings_total",
-          "legendFormat": "{{severity}}",
-          "instant": false
-        }
+        { "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" }, "expr": "entra_hygiene_findings_total{severity=\"critical\"}", "legendFormat": "critical", "instant": false },
+        { "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" }, "expr": "entra_hygiene_findings_total{severity=\"high\"}", "legendFormat": "high", "instant": false },
+        { "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" }, "expr": "entra_hygiene_findings_total{severity=\"medium\"}", "legendFormat": "medium", "instant": false },
+        { "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" }, "expr": "entra_hygiene_findings_total{severity=\"low\"}", "legendFormat": "low", "instant": false }
       ]
     },
     {
       "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
       "fieldConfig": {
         "defaults": {
-          "color": { "mode": "palette-classic" },
-          "custom": {
-            "lineWidth": 2,
-            "fillOpacity": 10
-          },
+          "color": { "mode": "fixed", "fixedColor": "blue" },
+          "custom": { "lineWidth": 2, "fillOpacity": 10 },
           "unit": "s"
         },
         "overrides": []
       },
-      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 42 },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 43 },
       "id": 12,
       "options": {
         "legend": { "calcs": ["lastNotNull", "mean"], "displayMode": "table", "placement": "right" },
@@ -479,42 +452,29 @@
       "title": "Scan Duration Over Time",
       "type": "timeseries",
       "targets": [
-        {
-          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-          "expr": "entra_hygiene_scan_duration_seconds",
-          "legendFormat": "duration",
-          "instant": false
-        }
+        { "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" }, "expr": "entra_hygiene_scan_duration_seconds", "legendFormat": "duration", "instant": false }
       ]
     },
     {
       "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
       "fieldConfig": {
         "defaults": {
-          "color": { "mode": "palette-classic" },
-          "custom": {
-            "lineWidth": 2,
-            "fillOpacity": 10
-          },
+          "color": { "mode": "fixed", "fixedColor": "dark-red" },
+          "custom": { "lineWidth": 2, "fillOpacity": 10 },
           "unit": "short"
         },
         "overrides": []
       },
-      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 42 },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 43 },
       "id": 13,
       "options": {
         "legend": { "calcs": ["lastNotNull"], "displayMode": "table", "placement": "right" },
-        "tooltip": { "mode": "multi" }
+        "tooltip": { "mode": "single" }
       },
       "title": "Check Errors Over Time",
       "type": "timeseries",
       "targets": [
-        {
-          "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-          "expr": "entra_hygiene_check_errors_total",
-          "legendFormat": "errors",
-          "instant": false
-        }
+        { "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" }, "expr": "entra_hygiene_check_errors_total", "legendFormat": "errors", "instant": false }
       ]
     }
   ],
@@ -522,10 +482,10 @@
   "schemaVersion": 38,
   "tags": ["entra", "security", "identity"],
   "templating": { "list": [] },
-  "time": { "from": "now-7d", "to": "now" },
+  "time": { "from": "now-24h", "to": "now" },
   "timepicker": {},
   "timezone": "browser",
   "title": "Entra Hygiene",
   "uid": "entra-hygiene",
-  "version": 1
+  "version": 2
 }

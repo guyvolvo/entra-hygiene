@@ -55,6 +55,10 @@ _legacy_auth_blocked = Gauge(
 )
 
 
+_mfa_policy_enforced.set(0)
+_legacy_auth_blocked.set(0)
+
+
 def start_metrics_server(port: int) -> None:
     start_http_server(port)
 
