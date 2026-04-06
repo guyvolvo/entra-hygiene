@@ -136,9 +136,9 @@ REPORT_EMAIL=recipient@yourdomain.com
 
 ## Serve Mode
 
-`docker compose up` runs the tool as a long-lived service. It performs a full scan on startup, then rescans every `SCAN_INTERVAL_MINUTES` minutes, re-authenticating before each run to handle token expiry.
+`docker compose up` runs the platform as a long-lived service. It performs a full scan on startup, then rescans every `SCAN_INTERVAL_MINUTES` minutes, re-authenticating before each run to handle token expiry.
 
-Serve mode exposes Prometheus metrics only. It does not send email reports - email delivery is handled by the `scan` command and the GitHub Actions workflow.
+Serve mode exposes Prometheus metrics only. It does not send email reports - email delivery is handled by the `scan` command and the GitHub Actions workflow. Use the included Grafana dashboard (`grafana/dashboard.json`) to visualize findings, track posture over time, and drill into individual affected objects.
 
 Metrics are exposed at `:5454/metrics` in Prometheus text format. Add this to your existing scrape config:
 
@@ -243,7 +243,7 @@ Exit code `2` is a normal operational state - your automation should treat it as
 
 ## Design Principles
 
-- **Read-only.** This tool never modifies your tenant. Every finding includes a remediation suggestion - acting on it is always a manual step.
+- **Read-only.** Never modifies your tenant. Every finding includes a remediation suggestion - acting on it is always a manual step.
 - **Fail loudly.** Missing permissions or auth failures produce a clear error, not a silent partial scan.
 - **Checks are independent.** One failing check never blocks the rest.
 - **Self-contained output.** The HTML report is a single file with no external dependencies - safe to email or archive.
