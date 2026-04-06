@@ -151,19 +151,19 @@ scrape_configs:
 
 **Exposed metrics:**
 
-```
-entra_hygiene_findings_total{severity="critical|high|medium|low|info"}
-entra_hygiene_findings_by_check{check_id, check_title}
-entra_hygiene_findings_by_check_severity{check_id, check_title, severity}
-entra_hygiene_finding{check_id, severity, title, affected_object}
-entra_hygiene_check_errors_total
-entra_hygiene_check_last_success_timestamp{check_id}
-entra_hygiene_last_scan_timestamp_seconds
-entra_hygiene_scan_duration_seconds
-entra_hygiene_scan_success
-entra_hygiene_mfa_policy_enforced
-entra_hygiene_legacy_auth_blocked
-```
+| Metric | Labels | Description |
+|---|---|---|
+| `entra_hygiene_findings_total` | `severity` | Total findings by severity level |
+| `entra_hygiene_findings_by_check` | `check_id`, `check_title` | Finding count per check |
+| `entra_hygiene_findings_by_check_severity` | `check_id`, `check_title`, `severity` | Finding count per check per severity |
+| `entra_hygiene_finding` | `check_id`, `severity`, `title`, `affected_object` | One time series per active finding - full detail as labels |
+| `entra_hygiene_check_errors_total` | - | Number of checks that errored on the last scan |
+| `entra_hygiene_check_last_success_timestamp` | `check_id` | Unix timestamp of last successful run per check |
+| `entra_hygiene_last_scan_timestamp_seconds` | - | Unix timestamp of last completed scan |
+| `entra_hygiene_scan_duration_seconds` | - | Duration of last scan |
+| `entra_hygiene_scan_success` | - | 1 if last scan had no check errors, 0 otherwise |
+| `entra_hygiene_mfa_policy_enforced` | - | 1 if a CA policy enforces MFA for all users, 0 otherwise |
+| `entra_hygiene_legacy_auth_blocked` | - | 1 if legacy auth is fully blocked by CA policy, 0 otherwise |
 
 ---
 
