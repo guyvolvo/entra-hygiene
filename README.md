@@ -99,13 +99,13 @@ The tool needs an App Registration in Entra ID with **Application permissions** 
 > `Mail.Send` is only required if you use the `SENDER_EMAIL` / `REPORT_EMAIL` email feature. With application permission it can send as any mailbox in the tenant. Scope it to a dedicated alerts mailbox via an [Exchange application access policy](https://learn.microsoft.com/en-us/graph/auth-limit-mailbox-access) if your org requires it.
 
 **Setup steps:**
-1. Azure Portal → Entra ID → App registrations → New registration
+1. Azure Portal > Entra ID > App registrations > New registration
 2. Name it anything (e.g. `entra-hygiene`)
-3. API permissions → Add → Microsoft Graph → Application permissions → add all permissions above
+3. API permissions > Add > Microsoft Graph > Application permissions > add all permissions above
 4. Grant admin consent
-5. Certificates & secrets → New client secret → copy the value into `.env`
+5. Certificates & secrets > New client secret > copy the value into `.env`
 
-For GitHub Actions, federated credentials are recommended over a client secret — no secret to rotate or store. See the GitHub Actions section for setup instructions.
+For GitHub Actions, federated credentials are recommended over a client secret - no secret to rotate or store. See the GitHub Actions section for setup instructions.
 
 ---
 
@@ -168,7 +168,7 @@ Runs every Sunday at 09:00 UTC. Uploads HTML and JSON reports as artifacts (reta
 
 **Setup:**
 
-1. **Settings → Secrets and variables → Actions → New repository secret:**
+1. **Settings > Secrets and variables > Actions > New repository secret:**
 
 | Secret | Required | Value |
 |---|---|---|
@@ -178,9 +178,9 @@ Runs every Sunday at 09:00 UTC. Uploads HTML and JSON reports as artifacts (reta
 | `SENDER_EMAIL` | No | Mailbox to send the report from |
 | `REPORT_EMAIL` | No | Recipient address |
 
-2. **Configure federated credentials (recommended — no secret to store or rotate):**
+2. **Configure federated credentials (recommended - no secret to store or rotate):**
 
-   In the Azure Portal, open your app registration → **Certificates & secrets → Federated credentials → Add credential**:
+   In the Azure Portal, open your app registration > **Certificates & secrets > Federated credentials > Add credential**:
 
    | Field | Value |
    |---|---|
@@ -191,20 +191,20 @@ Runs every Sunday at 09:00 UTC. Uploads HTML and JSON reports as artifacts (reta
    | Branch | `main` |
    | Name | anything (e.g. `github-actions`) |
 
-   Save, then add only `TENANT_ID` and `CLIENT_ID` as GitHub secrets — no `CLIENT_SECRET` required.
+   Save, then add only `TENANT_ID` and `CLIENT_ID` as GitHub secrets - no `CLIENT_SECRET` required.
 
    If you skip this step, set `CLIENT_SECRET` instead and the workflow falls back to client secret auth automatically.
 
-3. **Actions** tab → enable if prompted
+3. **Actions** tab > enable if prompted
 4. Trigger a manual run to verify before the next scheduled run fires
 
 **Manual runs:**
 
-Actions → **Entra Hygiene Scan** → **Run workflow**. Optionally pass a comma-separated list of check IDs and toggle email sending.
+Actions > **Entra Hygiene Scan** > **Run workflow**. Optionally pass a comma-separated list of check IDs and toggle email sending.
 
 **Reports:**
 
-Actions → click the run → **Artifacts** → download `entra-hygiene-<run_id>` (`report.html` + `report.json`).
+Actions > click the run > **Artifacts** > download `entra-hygiene-<run_id>` (`report.html` + `report.json`).
 
 ---
 
